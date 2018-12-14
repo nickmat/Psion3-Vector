@@ -1,0 +1,230 @@
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Project: VECTOR FOR THE PSION 3a          *  Written by: Nick Matthews  *
+ *  Module: PROGRAM NOTES AND SPECIFICATION  *  Date Started:  2 Sep 1996  *
+ *    File: VECSPEC.C       Type: ASCII TEXT *  Date Revised: 11 Feb 1997  *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+
+Command Keys
+
+           Psion              Shift-Psion            Single
+
+ A        Save as             First view             Jump to X,Y
+ B        Break               Second view            Zoom to box
+ C        Copy                Third view
+ D        Delete              Fourth view
+ E       *Eliptical arc      *Elipse                 Zoom to Extent
+ F        Rotate              Mirror
+ G        Group               Ungroup
+ H        Stretch            *Fill
+ I        Polyline            Polygon                Toggle Info window
+ J        Jump                Layers
+ K        View                Scale
+ L        Line                Box
+ M        Move                Edit symbol
+ N        New file           *Attributes
+ O        Open file           Symbol
+ P        Print               Property               Jump relative (Polar)
+ Q        Preferences        *Chamfer                Toggle Quick draw
+ R        Arc (centre)        Circle                 Jump relative (x,y)
+ S        Save                Snap & grid            Toggle snap
+ T        Text                Text style
+ U        Undo                Redo
+ V        Revert              About Vector
+ W        Arc (3 pt)/*Curve  *Shape
+ X        Exit                Exit, lose changes     Zoom out
+ Y        Print setup         Zoom to
+ Z        Zoom in             Zoom out               Zoom in
+ +        Quadrant
+ -       *Translate
+ *       *Dimension
+ /       *Infinite Line
+Diamond   Caps lock           Setup <> list
+
+Special keys
+              Key     Shift      Ctrl      Shift+Ctrl
+Enter
+  Drawing    Build
+Esc
+  Drawing    Restart or cancel if 1st step
+
+Up,Dn,Lt,Rt  Cur+1    Cur+10    *Scrn+1    *Scrn+10
+
+File             Edit            Modify              Draw
+  New file         Undo            Move                Line
+  Open file        Redo            Copy                Polyline
+  Save as          Erase           Scale               Arc (centre)
+  Save             Group           Stretch             Quadrant
+  Revert           Ungroup         Rotate              Arc (3 point)
+  About Vector     Symbol & font   Mirror              *Eliptical arc
+                   *Translate      Break               *Curve
+                                   Property            Text
+                                                       *Infinite Line
+
+Object          Settings         Special              Diamond
+  Box             Preferences      Jump                 First view
+  Polygon         Grid & Snap      Zoom in              Second view
+  Circle          Attributes       Zoom out             Third view
+  *Elipse         Layers           Zoom to              Fourth view
+  *Shape          Text style       Print setup          Set <> list
+  Symbol          *Chamfer         Print
+  *Fill           View             Exit, lose changes
+  *Dimension                       Exit
+
+Edit symbol sub menu
+  Create Symbol       c
+  Ungroup & modify    u
+  List symbols        l
+  *Add attach points  a
+
+Edit font sub menu
+  Create Font             f
+  Create space character  s
+  Ungroup & modify        m
+
+*Arc sub menu (Replace Arc (centre)/Quadrant/Arc (3 point))
+  Arc (centre)    a
+  Quadrant        q
+  Arc (3 point)   r
+
+*Dimension sub menu
+  Horizontal   h
+  Vertical     v
+  Aligned      l
+  Angle        a
+  Radius       r
+  Diameter     d
+
+Set preferences sub menu
+Preferences           Command
+  Cursor Style    c     Move/Copy    o
+  Selection area  m     Undo active  d
+  Jump area       j
+  Movement        m
+  Keyboard        k
+  Zoom step       z
+  Units           u
+  Page            p
+
+Jump to sub menu
+Jump to                         Nearest
+  Absolute                   a    End point            e
+  Relative to cursor (X,Y)   r    Mid point            m
+  Relative to cursor (Polar) o    Intersect            i
+  Relative to last (X,Y)     l    Centre               c
+  Relative to last (Polar)   s    Quadrant             q
+                                  Perpendicular (last) p
+                                  Tangent (last)       t
+
+Zoom to sub menu
+  Select box         b
+  Extent             e
+  Actual size        a
+  Full width         w
+  Full height        h
+  Set magnification  s
+
+Dialog boxes
+VECTOR.RSS
+ **  ABOUT_DIALOG              About dialog
+ **  REGISTER_DIALOG           Enter registration code dialog
+ **  ABOUT2_DIALOG             2nd About dialog
+ **  CREATE_NEW_DIALOG         Create new file dialog
+ **  OPEN_DIALOG               Open or import existing file dialog
+ **  SAVE_AS_DIALOG  File      Save as dialog
+ **  SAVE_BITMAP_DIALOG        Export as bitmap sub dialog */
+ **  SAVE_QCD_DIALOG           Export as QuickCAD sub dialog */
+ **  VIEW_DIALOG               Set windows to be displayed
+ **  DIAMONDLIST_DIALOG
+ **  SET_CURSOR_DIALOG         Set cursor style - from Preferences sub menu.
+ **  SELECT_BOX_DIALOG         Set Selection box size - from Preferences sub menu.
+ **  JUMP_BOX_DIALOG           Set Jump to box size - from Preferences sub menu.
+ **  SET_MOVEMENT_DIALOG       Set movement key function - from Preferences sub menu.
+ **  SET_KEYS_DIALOG           Set keyboard commands - from Preferences sub menu
+ **  SET_ZOOM_DIALOG           Set zoom step - from Preferences sub menu
+ **  SET_UNITS_DIALOG          Set units - from Preferences sub menu
+ **  SET_PAGE_DIALOG           Set Page size
+ **  SET_MARGINS_DIALOG        Set Page margins
+ **  MOVE_COPY_DIALOG          Set the Scale, Stretch, Rotate and Mirror commands
+ **  SET_UNDO_DIALOG           Set Undo activity - from Preferences sub menu
+ **  CREATE_FONT_SPACE_DIALOG  Create a new font space character dialog
+ **  SNAP_GRID_DIALOG          Set Snap and Grid values
+ **  LAYER_DIALOG              Set Layer values
+ **  LAYER_NAME_DIALOG
+ **  SET_TEXT_DIALOG           Set Text Font and transformation details
+ **  ADD_TSTYLE_DIALOG         Add Text Style and transformation details
+ **  DEL_ALL_TSTYLE_DIALOG
+ **  SET_ZOOM_MAG_DIALOG       Set zoom magnification dialog
+ **  JUMP_XY_REL_DIALOG        Jump to relative x,y entered point
+ **  JUMP_POLAR_DIALOG         Jump to relative polar entered point
+ **  LIST_SYMBOL_DIALOG        List (only) symbols in current file
+ **  PRINT_SETUP_DIALOG        Set Page size
+ **  CUSTOM_PLOT_DIALOG        Custom ploting dialog (Debug only)
+ **  ESC_PLOT_DIALOG           Escape from Plotting dialog
+ **  DEBUG_DIALOG              Display debug info dialog
+
+VECBLD.RSI
+ **  CREATE_SYM_DIALOG         Create a new symbol dialog
+ **  CREATE_FONT_CH_DIALOG     Create a new font character dialog
+ **  AGGR_PROP_DIALOG          Show Selection and Group properties
+ **  CHAR_PROP_DIALOG          Show Character properties
+ **  SYM_PROP_DIALOG           Show Symbol properties
+ **  SYM_NAME_DIALOG
+ **  LINE_PROP_DIALOG          Show Line properties
+ **  PLINE_PROP_DIALOG         Show Polyline/Polygon properties
+ **  CIRCLE_PROP_DIALOG        Show circle properties
+ **  ARC_PROP_DIALOG           Show centred Arc properties
+ **  ARC3PT_PROP_DIALOG        Show 3pt Arc properties
+ **  TEXT_PROP_DIALOG          Show Text properties
+ **  LINK_PROP_DIALOG          Show Symbol Link properties
+ **  POINT_PROP_DIALOG         Show point properties (used as a popout dialog)
+
+VECSYM.RSI
+ **  SELECT_LIB_DIALOG         Select Library file dialog
+ **  SELECT_SYM_DIALOG         Select Symbol dialog
+ **  SYM_SETTINGS_DLG
+
+VECDXF.RSI
+ **  ESC_EXPORT_DIALOG  Escape from export dialog
+ **  ESC_IMPORT_DIALOG  Escape from import dialog
+
+
+Program Panic numbers
+  229  Bitmap size wrong. See DrawLine.asm
+  230  Trying to write outside bitmap. See DrawLine.asm
+  247  Unknown popup control (Symbol selector)
+  248  Unknown popup frame (Symbol selector)
+  249  Delete item from list (Symbol selector??)
+  250  Popup text too big (Symbol selector)
+  251  Corrupt data file.
+  252  Unknown Build step. see VecBuild.c ???_bld_step members
+  253  Unable to open Bitmap BlackBM. See VecDWin.c vecdw_wn_init
+  254  Unable to create Bitmap ID (BlackBM). See VecDWin.c vecdw_wn_init
+
+
+File Types
+  All drawing files will follow the same specification, but the extension is
+  used to indicate the files purpose
+
+      .vec  Standard Vector drawing
+      .vsl  Vector Symbol Library
+      .vft  Vector Font description
+      .vtp  Vector Template file
+
+    Future:-
+      *.vld  Vector Line Description
+
+  All other extensions are treated as *.vec files.
+
+  Other file types:-
+
+      .vdl  Vector Dynamic Library (Export, Import and Printing)
+
+    Export  Import files:-
+      Y              .pic  Psion bitmap
+      Y              .pcx  PC Paintbrush bitmap
+     *Y       *Y     .plt  HP-PL plotter language
+      Y        Y     .dxf  AutoSketch data exchange
+     *Y       *Y     .qcd  QuickCAD files
+
+

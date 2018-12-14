@@ -1,0 +1,613 @@
+!* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+!* Project: VECTOR FOR THE PSION 3a          *  Written by: Nick Matthews  *
+!*  Module: BUILD DYL OOP CATAGORY FILE      *  Date Started: 10 Apr 1997  *
+!*    File: VECBLD.CAT      Type: PSION CAT  *  Date Revised:  2 Jun 1997  *
+!* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+!   Copyright (c) 1997, Nick Matthews
+
+LIBRARY vecbld
+
+EXTERNAL olib
+EXTERNAL hwim
+
+INCLUDE epoc.h
+INCLUDE hwimman.g
+INCLUDE vector.g
+
+!***************************************************************************
+!*  build  Build up a new element. Abstract class
+!*  ~~~~~
+
+CLASS build root
+{
+    REPLACE destroy
+    ADD bld_cancel                  ! Go back to 1st step. Esc key
+    ADD bld_back = build_bld_cancel ! Back up one step. Del key
+    ADD bld_reselect = p_false      ! Reselect prev. selection. Tab key
+    ADD bld_step                    ! Complete step & setup next. Enter key
+    ADD bld_save                    ! Final save to data
+    DEFER bld_init                  ! All subclasses must define this
+    DEFER bld_key                   ! Handle printable keys
+    CONSTANTS
+    {
+        ! Build states
+        BLD_1ST   0  ! All sub classes initialise with this
+        BLD_2ND   1
+        BLD_3RD   2
+        BLD_4TH   3
+        BLD_5TH   4
+        BLD_NEXT  5
+    }
+    PROPERTY
+    {
+        INT   state;      ! Current step
+        UINT  cmd;        ! Info Window Command rid
+        UINT  step1;      ! BLD_1ST step status string id
+        UINT  step2;      ! BLD_2ND step status string id
+        INT   eltype;     ! Element type being constructed
+        ELEM  el;         ! Element being built
+        INT   CopyFlag;   ! Flag to indicate if a copy type operation
+        INT   temp;       ! True if a temporary build (tbuild)
+        INT   UndoMsg;    ! Message for undo to display
+    }
+}
+
+!** Build a line element
+CLASS nline build
+{
+    REPLACE bld_init
+}
+
+!** Build a polyline element
+CLASS npline nline
+{
+    REPLACE bld_init
+    REPLACE bld_step
+    REPLACE bld_back
+    PROPERTY
+    {
+        INT count;
+        INT polytype;
+    }
+}
+
+!** Build a polygon element
+CLASS npgon npline
+{
+    REPLACE bld_init
+}
+
+!** Build a box element
+CLASS nbox build
+{
+    REPLACE bld_init
+    REPLACE bld_save
+}
+
+!** Build a circle element
+CLASS ncircle build
+{
+    REPLACE bld_init
+    REPLACE bld_step
+}
+
+!** Build a centred arc element
+CLASS narc build
+{
+    REPLACE bld_init
+    REPLACE bld_step
+    REPLACE bld_back
+}
+
+!** Build a 3 point circular arc element
+CLASS n3parc nline
+{
+    REPLACE bld_init
+    REPLACE bld_step
+    REPLACE bld_back
+}
+
+!** Build a 3 point quadrant arc element
+CLASS nquad build
+{
+    REPLACE bld_init
+    REPLACE bld_step
+}
+
+!** Build a text element
+CLASS ntext build
+{
+    REPLACE bld_init
+    REPLACE bld_step
+    REPLACE bld_key
+    REPLACE bld_back
+}
+
+!** Build a horizontal dimension element
+CLASS ndimh build
+{
+    REPLACE bld_init
+    REPLACE bld_step
+    REPLACE bld_back
+}
+
+!** Build a symbol link or copy
+CLASS nsym build
+{
+    REPLACE bld_init
+    REPLACE bld_step
+    TYPES
+    {
+        typedef struct
+        {
+            INT blackbm;
+            INT greybm;
+            EL_LINK* link;
+            INT* ret;          ! Return value <0=err, >0=esc 0=good
+        } NSYM_DATA;
+    }
+    PROPERTY 1
+    {
+        PR_DLGCHAIN* symwin;     ! The symbol selector class
+        VOID*  dcb;              ! DYL File channel
+        HANDLE dyl;              ! Category handle
+        INT    ret;              ! Comunication with symwin
+    }
+}
+
+!** Temporary build, saves existing build & replaces it when destroyed
+CLASS tbuild build
+{
+    REPLACE destroy
+    REPLACE bld_init
+    PROPERTY
+    {
+        PR_BUILD* oldbuild;
+        PR_BAND* oldband;
+        UINT oldcmd;
+        UINT oldstep;
+        INT oldtext;
+    }
+}
+
+CLASS zbox tbuild
+{
+    REPLACE bld_init
+    REPLACE bld_step
+}
+
+!*** Select operations base class
+CLASS select build
+{
+    REPLACE destroy
+    REPLACE bld_init
+    REPLACE bld_cancel
+    REPLACE bld_reselect
+    REPLACE bld_back
+    REPLACE bld_step
+    ADD sel_filter = p_true
+    PROPERTY
+    {
+        INT   BandLayerOn;    ! TRUE if a section is active
+        UINT  step3;          ! BLD_3RD step status string id
+        UINT  step4;          ! BLD_4th step status string id
+        UINT  ProcessOp;      ! Process operation
+        INT   BandClass;      ! Band class to create
+        A_PT  pt[2];          ! Selected points (from, to etc.)
+        INT   PointsOnly;     ! TRUE if only points to be selected
+        ARECT Rect;           ! The selection rect for points or bound rect
+        INT   Count;          ! Items selected, Aggregates count as one.
+    }
+}
+
+!** Select and Move elements
+CLASS emove select
+{
+    REPLACE bld_init
+}
+
+!** Select and Copy elements
+CLASS ecopy select
+{
+    REPLACE bld_init
+}
+
+!** Select and Scale elements
+CLASS escale select
+{
+    REPLACE bld_init
+    REPLACE bld_step
+    REPLACE bld_back
+    REPLACE sel_filter = sel_grp_agr_only
+}
+
+!** Select and Stretch elements
+CLASS estretch select
+{
+    REPLACE bld_init
+    REPLACE bld_step
+    REPLACE sel_filter = sel_grp_agr_only
+}
+
+!** Select and Rotate elements
+CLASS erotate select
+{
+    REPLACE bld_init
+    REPLACE sel_filter = sel_grp_agr_only
+}
+
+!** Select and Mirror image elements
+CLASS emirror select
+{
+    REPLACE bld_init
+    REPLACE sel_filter = sel_grp_agr_only
+}
+
+!** Select and Erase elements
+CLASS eerase select
+{
+    REPLACE bld_init
+    REPLACE bld_step
+}
+
+!** Select and Break elements (See VecBreak.c)
+CLASS ebreak select
+{
+    REPLACE bld_init
+    REPLACE bld_step
+    REPLACE sel_filter
+}
+
+!** Select and Show Property (See VecProp.c & VecPDlg.c)
+CLASS eprop select
+{
+    REPLACE bld_init
+    REPLACE bld_step
+    PROPERTY
+    {
+        INT layer;          ! Layer for multiple elements
+    }
+}
+
+!** Select and Group elements
+CLASS egroup select
+{
+    REPLACE bld_init
+    REPLACE bld_step
+    REPLACE sel_filter = sel_grp_agr_only
+}
+
+!** Select and create Symbol elements
+CLASS ecsym select
+{
+    REPLACE bld_init
+    REPLACE bld_step
+    REPLACE sel_filter = sel_el_only
+}
+
+!** Select and create Font character
+CLASS ecchar select
+{
+    REPLACE bld_init
+    REPLACE bld_step
+    REPLACE sel_filter
+}
+
+!** Select and Ungroup elements
+CLASS eungrp select
+{
+    REPLACE bld_init
+    REPLACE bld_step
+    REPLACE sel_filter
+    PROPERTY
+    {
+        UBYTE AggrType;
+        UBYTE spare;
+        UINT  UndoCom;
+    }
+}
+
+!** Select and Ungroup Symbol elements
+CLASS eunsym eungrp
+{
+    REPLACE bld_init
+}
+
+!** Select and Ungroup Font Character elements
+CLASS eunchar eungrp
+{
+    REPLACE bld_init
+}
+
+!***************************************************************************
+!*  csymdlg  Create Symbol dialog
+!*  ~~~~~~~
+
+CLASS csymdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+}
+
+!***************************************************************************
+!*  cftchdlg  Create Font Character dialog
+!*  ~~~~~~~~
+
+CLASS cftchdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+}
+
+!***************************************************************************
+!*  aggrpdlg  Base class for show Aggregate Property dialogs.
+!*  ~~~~~~~~
+
+CLASS aggrpdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+    REPLACE dl_changed
+    TYPES
+    {
+        typedef struct
+        {
+            UINT hand;  ! Element handle
+            INT  type;  ! Element type
+        } PROP_ITEM;
+        typedef struct
+        {
+            WORD       key;      ! Key used to return from dialog
+            PROP_ITEM* itemlist; ! List of items in aggregate
+            INT        itemsize; ! Number of items in list
+            INT        curitem;  ! Currently selected item
+            ELEM*      elem;     ! Pointer to the aggregate element (or NULL)
+            INT        type;     ! Type of aggregate (-1 == Selection )
+            INT        layer;    ! Layer, -1 == MULTPLE, -2 == NULL itemlist
+            INT        nlayer;   ! New layer, same as layer if no change.
+        } APROP_DATA;
+    }
+    CONSTANTS
+    {
+        AGGRP_LAYER  1
+        AGGRP_ITEMS  2
+    }
+    PROPERTY
+    {
+        PR_VASTR* vaLayer;   ! The full Layer discriptions
+        PR_VASTR* vaItems;   ! The Items discriptions
+        INT       ItemCtrl;  ! Item list control number
+    }
+}
+
+!***************************************************************************
+!*  grppdlg  Show Selection or Group Property dialog. V_GROUP
+!*  ~~~~~~~
+
+CLASS grppdlg aggrpdlg
+{
+    REPLACE dl_dyn_init
+    CONSTANTS
+    {
+        !AGGRP_LAYER  1
+        GRPP_ITEMS    2
+    }
+}
+
+!***************************************************************************
+!*  charpdlg  Show Character Property dialog. V_CHARACTER
+!*  ~~~~~~~~
+
+CLASS charpdlg aggrpdlg
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+    REPLACE dl_set_size
+    REPLACE dl_launch_sub    ! Launch Point dialog for Hotspot control
+    CONSTANTS
+    {
+        !AGGRP_LAYER  1
+        CHARP_HOTSPOT 2
+        CHARP_PITCH   3
+        CHARP_ASCII   4
+        CHARP_ITEMS   5
+    }
+}
+
+!***************************************************************************
+!*  sympdlg  Show Symbol Property dialog. V_SYMBOL
+!*  ~~~~~~~
+
+CLASS sympdlg aggrpdlg
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+    REPLACE dl_set_size
+    REPLACE dl_launch_sub
+    CONSTANTS
+    {
+        !AGGRP_LAYER  1
+        SYMP_HOTSPOT 2
+        !SYMP_ATTACH  3
+        SYMP_REF     3
+        SYMP_NAME    4
+        SYMP_ITEMS   5
+    }
+    PROPERTY
+    {
+        PR_VASTR* vapts;    ! Array of Attach point strings
+        INT       NoAttach; ! TRUE if there are no attached points
+    }
+}
+
+!***************************************************************************
+!*  symnamdlg  Symbol name dialog
+!*  ~~~~~~~~~
+
+CLASS symnamdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+}
+
+!***************************************************************************
+!*  propdlg  Base property dialog, Use directly for V_LINE and V_3PT_ARC
+!*  ~~~~~~~
+
+CLASS propdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+    REPLACE dl_set_size
+    REPLACE dl_launch_sub
+    CONSTANTS
+    {
+        !PROP_ATTR
+        PROP_LAYER   1
+        PROP_BEG     2
+    }
+}
+
+!***************************************************************************
+!*  cirpdlg  Show Circle property dialog. V_CIRCLE
+!*  ~~~~~~~
+
+CLASS cirpdlg propdlg
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+    CONSTANTS
+    {
+        !PROP_LAYER   1
+        CIRP_CENTRE   PROP_BEG
+        CIRP_RADIUS   3
+    }
+}
+
+!***************************************************************************
+!*  cirpdlg  Show Circle property dialog. V_CIRCLE
+!*  ~~~~~~~
+
+CLASS arcpdlg propdlg
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+    CONSTANTS
+    {
+        !PROP_LAYER   1
+        ARCP_CENTRE   PROP_BEG
+        ARCP_RADIUS   3
+        ARCP_BEG      4
+        ARCP_END      5
+    }
+}
+
+!***************************************************************************
+!*  textpdlg  Show Text property dialog. V_TEXT
+!*  ~~~~~~~~
+
+CLASS textpdlg propdlg
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+    CONSTANTS
+    {
+        !PROP_LAYER    1
+        TEXTP_POS      PROP_BEG
+        TEXTP_TEXT     3
+        TEXTP_FONT     4
+        TEXTP_SIZE     5
+        TEXTP_ANGLE    6
+        TEXTP_FLIP     7
+    }
+}
+
+!***************************************************************************
+!*  linkpdlg  Show Symbol Link property dialog. V_LINK
+!*  ~~~~~~~~
+
+CLASS linkpdlg propdlg
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+    CONSTANTS
+    {
+        !PROP_LAYER    1
+        LINKP_POS      PROP_BEG
+        LINKP_LIB      3
+        LINKP_SYM      4
+        LINKP_SCALE    5
+        LINKP_ANGLE    6
+        LINKP_FLIP     7
+    }
+}
+
+!***************************************************************************
+!*  plinpdlg  Show Polyline property dialog. V_POLYLINE and V_POLYGON
+!*  ~~~~~~~~
+
+CLASS plinpdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+    REPLACE dl_set_size
+    CONSTANTS
+    {
+        !PROP_LAYER   1
+        PLINP_PTS     PROP_BEG
+    }
+    PROPERTY
+    {
+        PR_VASTR* vapts; ! Point string array
+    }
+}
+
+!***************************************************************************
+!*  ptdlg  Edit A_PT value dialog
+!*  ~~~~~
+
+CLASS ptdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+}
+
+!***************************************************************************
+!*  extra  Misc. functions, put here to save space in vector
+!*  ~~~~~
+
+CLASS extra root
+{
+    ! VecJump.c
+    ADD ex_jump_near      ! Jump to nearest give type
+    ADD ex_jump_dialog    ! Jump to dialog
+    ! VecExp.c
+    ADD ex_export         ! Export to given file, format and size
+}
+
+!***************************************************************************
+!*  jmpdlg  Jump to cartisian coordinates
+!*  ~~~~~~
+
+CLASS jmpdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+    TYPES
+    {
+        typedef struct
+        {
+            UINT flags;
+            A_PT* pPt;     ! Pointer to relative point or NULL for absolute
+        } JMPDLG_DATA;
+    }
+    CONSTANTS
+    {
+        JMP_ABSOLUTE 0x0000
+        JMP_RELATIVE 0x0001
+        JMP_POLAR    0x0002
+    }
+}
+
+! End of VECBLD.CAT

@@ -1,0 +1,267 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Project: VECTOR FOR THE PSION 3a          *  Written by: Nick Matthews  *
+ *  Module: SELECT SYMBOL RESOURCE INCLUDE   *  Date Started: 21 Jan 1997  *
+ *    File: VECSYM.RSS      Type: PSION RSS  *  Date Revised: 21 Jan 1997  *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+    Copyright (c) 1997, Nick Matthews
+*/
+
+RESOURCE STRING sel_sym_library    { str = "Library: %s"; }
+RESOURCE STRING sel_sym_name       { str = "Symbol: %s"; }
+RESOURCE STRING sel_sym_scale      { str = "Scale: %d:%d"; }
+RESOURCE STRING sel_sym_rotate     { str = "Rotate: %s deg"; }
+RESOURCE STRING sel_sym_mirror     { str = "Flip: %s"; }
+RESOURCE STRING sel_sym_horizontal { str = "Horizontal"; }
+RESOURCE STRING sel_sym_vertical   { str = "Vertical"; }
+RESOURCE STRING sel_sym_none       { str = "None"; }
+RESOURCE STRING sel_sym_create     { str = "Create: %s"; }
+RESOURCE STRING sel_sym_copy       { str = "Duplicate"; }
+RESOURCE STRING sel_sym_link       { str = "Link"; }
+RESOURCE STRING sel_sym_view_scale { str = "Viewing scale: 1:%d"; }
+
+
+RESOURCE STRING sel_sym_select     { str = "Select"; }
+RESOURCE STRING sel_sym_prev       { str = <WS_SYMBOL_LEFT_ARROWHEAD>; }
+RESOURCE STRING sel_sym_next       { str = <WS_SYMBOL_RIGHT_ARROWHEAD>; }
+RESOURCE STRING sel_sym_list_sym   { str = "List symbols"; }
+RESOURCE STRING sel_sym_menu       { str = "Menu"; }
+RESOURCE STRING sel_sym_change_lib { str = "Change library"; }
+RESOURCE STRING sel_sym_diamond    { str = <WS_SYMBOL_DIAMOND>; }
+RESOURCE STRING sel_sym_change_set { str = "Change setting"; }
+RESOURCE STRING sel_sym_tab        { str = "Tab"; }
+
+RESOURCE STRING sr_no_libraries        { str = "No libraries found"; }
+RESOURCE STRING sr_err_d_in_ctrl_d_fmt { str = "Error %d in control %d"; }
+
+/* NOTE: The source refers to these in the order that they appear */
+/* so don't make changes without checking */
+
+RESOURCE POPUP select_symbol_dlg
+{
+    rect = { 40, 5, 400, 153 };
+    clist =
+    {
+        PUCONTROL
+        {
+            rect = { 110, 5, 300, 21 };
+            id = O_SYW_NAME;
+            type = PU_CTRL_TEXT;
+            style = PU_TEXT_CENTRE;
+        },
+        PUCONTROL
+        {
+            rect = { 140, 23, 270, 143 };
+            id = 0;
+            type = PU_CTRL_FRAME;
+            style = PU_FRAME_LIGHT;
+        },
+        PUCONTROL
+        {
+            rect = { 10, 5, 110, 21 };
+            id = O_SYW_LIBRARY;
+            type = PU_CTRL_TEXT;
+            style = PU_TEXT_LEFT;
+        },
+        PUCONTROL
+        {
+            rect = { 10, 21, 130, 37 };
+            id = O_SYW_SCALE;
+            type = PU_CTRL_TEXT;
+            style = PU_TEXT_LEFT;
+        },
+        PUCONTROL
+        {
+            rect = { 10, 37, 130, 53 };
+            id = O_SYW_ROTATE;
+            type = PU_CTRL_TEXT;
+            style = PU_TEXT_LEFT;
+        },
+        PUCONTROL
+        {
+            rect = { 10, 53, 130, 69 };
+            id = O_SYW_MIRROR;
+            type = PU_CTRL_TEXT;
+            style = PU_TEXT_LEFT;
+        },
+        PUCONTROL
+        {
+            rect = { 10, 69, 130, 85 };
+            id = O_SYW_CREATE;
+            type = PU_CTRL_TEXT;
+            style = PU_TEXT_LEFT;
+        },
+        PUCONTROL
+        {
+            rect = { 10, 85, 130, 101 };
+            id = O_SYW_VIEW_SCALE;
+            type = PU_CTRL_TEXT;
+            style = PU_TEXT_LEFT;
+        },
+        PUCONTROL
+        {
+            rect = { 300, 5, 370, 21 };
+            id = sel_sym_select;
+            type = PU_CTRL_STATIC;
+            style = PU_TEXT_CENTRE;
+        },
+        PUCONTROL
+        {
+            rect = { 290, 23, 330, 43 };
+            id = sel_sym_prev;
+            type = PU_CTRL_BUTTON;
+        },
+        PUCONTROL
+        {
+            rect = { 340, 23, 380, 43 };
+            id = sel_sym_next;
+            type = PU_CTRL_BUTTON;
+        },
+        PUCONTROL
+        {
+            rect = { 290, 55, 380, 71 };
+            id = sel_sym_list_sym;
+            type = PU_CTRL_STATIC;
+            style = PU_TEXT_CENTRE;
+        },
+        PUCONTROL
+        {
+            rect = { 290, 73, 380, 93 };
+            id = sel_sym_menu;
+            type = PU_CTRL_BUTTON;
+        },
+        PUCONTROL
+        {
+            rect = { 290, 103, 380, 119 };
+            id = sel_sym_change_lib;
+            type = PU_CTRL_STATIC;
+            style = PU_TEXT_CENTRE;
+        },
+        PUCONTROL
+        {
+            rect = { 290, 121, 380, 141 };
+            id = sel_sym_diamond;
+            type = PU_CTRL_BUTTON;
+        },
+        PUCONTROL
+        {
+            rect = { 10, 103, 130, 119 };
+            id = sel_sym_change_set;
+            type = PU_CTRL_STATIC;
+            style = PU_TEXT_CENTRE;
+        },
+        PUCONTROL
+        {
+            rect = { 25, 121, 115, 141 };
+            id = sel_sym_tab;
+            type = PU_CTRL_BUTTON;
+        }
+    };
+}
+
+/***************************************************************************
+ **  SELECT_LIB_DIALOG  Select Library file dialog
+ **  ~~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG select_lib_dialog
+{
+    title = "Select library";
+    flags = DLGBOX_NOTIFY_ENTER | DLGBOX_RBUF_FILLED;
+    controls =
+    {
+        CONTROL
+        {
+            prompt = "Library";
+            class = C_CHLIST;
+            info = CHLIST {};
+        }
+    };
+}
+
+/***************************************************************************
+ **  SELECT_SYM_DIALOG  Select Symbol dialog
+ **  ~~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG select_sym_dialog
+{
+    title = "Select symbol";
+    flags = DLGBOX_NOTIFY_ENTER | DLGBOX_RBUF_FILLED;
+    controls =
+    {
+        CONTROL
+        {
+            prompt = "Symbol";
+            class = C_CHLIST;
+            info = CHLIST {};
+        }
+    };
+}
+
+RESOURCE DIALOG sym_settings_dlg
+{
+    title = "Symbol settings";
+    flags = DLGBOX_NOTIFY_ENTER | DLGBOX_RBUF_FILLED;
+    controls =
+    {
+        CONTROL
+        {
+            flags = DLGBOX_ITEM_APPL_CAT;
+            class = C_SCALEDIT;
+            prompt = "Scale";
+            info = LNCEDIT
+            {
+                low = 1;
+                high = 250;
+                current = 1;
+            };
+        },
+        CONTROL
+        {
+            class = C_FLTEDIT;
+            prompt = "Rotate";
+            info = FLTEDIT
+            {
+                low = 0.00;
+                high = 360;
+                current = 0.00;
+                vulen = 7;
+                ndec = 2;
+            };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Flip";
+            info = CHLIST { rid = sym_mirror_list; };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Create";
+            info = CHLIST { rid = sym_create_list; };
+        }
+    };
+}
+
+RESOURCE MENU sym_mirror_list
+{
+    items =
+    {
+        CHOICE_ITEM { str = "None"; },
+        CHOICE_ITEM { str = "Horizontal"; },
+        CHOICE_ITEM { str = "Vertical"; }
+    };
+}
+
+RESOURCE MENU sym_create_list
+{
+    items =
+    {
+        CHOICE_ITEM { str = "Link"; },
+        CHOICE_ITEM { str = "Duplicate"; }
+    };
+}
+
+/* End of VecSym.rsi file */

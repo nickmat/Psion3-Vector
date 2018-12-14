@@ -1,0 +1,25 @@
+--* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+--* Project: VECTOR FOR THE PSION 3a          *  Written by: Nick Matthews  *
+--*  Module: VECDXF DYL PROJECT FILE          *  Date Started: 26 Aug 1998  *
+--*    File: VECDXF.PR       Type: TS PROJECT *  Date Revised: 13 Oct 1998  *
+--* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+-- For use with VECTOR.MAK file
+
+#system epoc dyl
+#set epocinit=iplib
+#model small jpi
+
+#abort on
+
+#compile vecdxf.c
+#compile vecdxfob.c
+#compile vecdxfim.c
+#compile vecdxfex.c
+
+#pragma link(olib.lib)
+#pragma link(hwim.lib)
+
+#link vecdxf
+
+-- End of VECDXF.PR file

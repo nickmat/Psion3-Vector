@@ -1,0 +1,24 @@
+# Info window
+
+The top 2 lines of the Info window shows the current
+command and the next step that the command requires.
+
+The next 4 lines show coordinates as follows:-
+
+A: Current cursor position in Absolute coordinates
+
+L: Last cursor position when Enter was pressed.
+
+R: Current cursor position relative to Last position.
+
+P: Polar coordinates, relative to Last position.
+
+There follows some of the main program settings:-
+
+S: Snap status, G: Grid status
+The current Layer name
+A list of the layers being displayed. The current layer is
+underlined, layers not displayed are replaced with a space.
+The current Text style name.
+
+The bottom of the window shows the registration status.

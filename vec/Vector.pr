@@ -1,0 +1,62 @@
+--* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+--* Project: VECTOR FOR THE PSION 3a          *  Written by: Nick Matthews  *
+--*  Module: TOPSPEED/PSION SIBO SDK PROJECT  *  Date Started: 27 Aug 1996  *
+--*    File: VECTOR.PR       Type: TS PROJECT *  Date Revised: 30 Nov 1998  *
+--* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+-- For use with VECTOR.MAK file
+
+#system epoc img
+-- Use iplib for a 4k stack or iplib8 for a 8k stack
+#set epocinit=iplib
+#model small jpi
+
+#abort on
+
+#set version=0x100B
+#set priority=0x80
+#set heapsize=0x100
+
+#compile vecdata.c
+#compile vecdrg.c
+#compile vectext.c
+#compile vecfile.c
+#compile veciwin.c
+#compile vecmisc.c
+#compile vecdwin.c
+#compile vecdraw.c
+#compile veccalc.c
+#compile vecband.c
+#compile vector.c
+#compile vecmain.c
+#compile veccom.c
+#compile vecdlg.c
+#compile vecswin.c
+#compile vecundo.c
+#compile vectdlg.c
+#compile veclocs.c
+#compile vecldlg.c
+#compile regread.c
+#compile vecabout.c
+#compile vecsadlg.c
+#compile vecprint.c
+#compile vecplot.c
+#compile vecpage.c
+#compile vecudlg.c
+#compile vecscale.c
+#compile vecdim.c
+
+#pragma link(drawline.obj)
+#pragma link(hypot.obj)
+#pragma link(trig.obj)
+#pragma link(process.obj)
+#pragma link(circle.obj)
+#pragma link(drawgrid.obj)
+#pragma link(clear.obj)
+
+#pragma link(olib.lib)
+#pragma link(hwim.lib)
+
+#link vector
+
+-- End of VECTOR.PR file

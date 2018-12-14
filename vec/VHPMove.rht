@@ -1,0 +1,38 @@
+# Moving around
+
+Use the arrow keys to move the drawing cursor and screen
+around the page. The actions of keys can be set from the
+'Movement' option on the 'Settings/Preferences' sub menu.
+If set to 'Accelerating cursor', the cursor will move one
+unit when the key is first pressed, and then larger steps
+the longer the key is held down. A unit of movement is
+either the width of a pixel or, if the snap option is on,
+the snap spacing.
+
+The Psion+arrow keys have the following action:-
+
+Home:  Move cursor to top left of screen
+
+Shift+Home:  Move cursor to top left of page.
+
+End:  Move cursor to bottom right of screen.
+
+Shift+End:  Move cursor to bottom right of page
+
+Page up:  Move screen up by half the screen height
+
+Shift+Page up:  Move screen left by half the screen width
+
+Page down:  Move screen down by half the screen height
+
+Shift+Page down:  Move screen right by half the screen
+width
+
+Use the 'Jump' option from the 'Special' menu to move the
+cursor to a specific point on the paper.
+
+The "<4>" key can be used to move between up to four
+different views on the drawing.
+
+If a drawing has Text on it, you can speed up moving around
+by using the Quick draw [Q] key.

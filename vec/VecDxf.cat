@@ -1,0 +1,140 @@
+!* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+!* Project: VECTOR FOR THE PSION 3a          *  Written by: Nick Matthews  *
+!*  Module: DXF IMPORT & EXPORT DYL          *  Date Started: 26 Aug 1998  *
+!*    File: VECDXF.CAT      Type: PSION CAT  *  Date Revised: 26 Aug 1998  *
+!* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+!   Copyright (c) 1998, Nick Matthews
+
+LIBRARY vecdxf
+
+EXTERNAL olib
+EXTERNAL hwim
+
+INCLUDE olib.g
+INCLUDE hwimman.g
+
+!***************************************************************************
+!*  dxf  QuickCAD Import and Export
+!*  ~~~
+
+CLASS xchange root
+{
+    REPLACE destroy
+    ADD xch_version
+    ADD xch_import
+    ADD xch_export
+    TYPES
+    {
+        typedef struct
+        {
+            TEXT* fname;
+            UINT  res;
+        } EXPORT_DATA_DXF;
+        typedef struct
+        {
+            DOUBLE x;
+            DOUBLE y;
+        } D_PT;
+        typedef struct
+        {
+            TEXT   txt1[256];
+            TEXT   txt2[MAX_NAME_Z];
+            TEXT   txt7[MAX_NAME_Z];
+            TEXT   txt8[UNAME_MAX_Z];
+            D_PT   p10_20;
+            D_PT   p11_21;
+            D_PT   p14_24;
+            D_PT   p15_25;
+            DOUBLE dim40;
+            DOUBLE dim41;
+            DOUBLE dim42;
+            DOUBLE ang50;
+            DOUBLE ang51;
+            INT    pen62;
+            UINT   f66;
+            UINT   f70;
+            UINT   f71;
+            UINT   f72;
+            UINT   f73;
+            UINT   f75;
+            UINT   f76;
+        } DXF_INPUT;
+        typedef struct
+        {
+            TEXT name[UNAME_MAX_Z];
+            INT  off;
+        } DXF_LAYER;
+        typedef struct
+        {
+            TEXT name[MAX_NAME_Z];
+            LONG pos;
+        } DXF_BLK;
+    }
+    CONSTANTS
+    {
+        LINK_NAME_MAX    14
+        LINK_NAME_MAX_Z  16
+        MAX_NAME         32
+        MAX_NAME_Z       34
+        UNAME_MAX        15
+        UNAME_MAX_Z      16
+    }
+    PROPERTY 3
+    {
+        PR_ROOT*   idle;
+        PR_DLGBOX* esc;
+        PR_VAFLAT* blktab;
+        INT        cancel;
+        VOID*      pcb;
+        TEXT*      fname;
+        INT        grp;     ! Current DXF group code
+        TEXT*      fbuf;    ! Current DXF group text
+        UINT       code;    ! Current DXF group text string code (same as rsi file)
+        DXF_INPUT  inp;     ! Entry input details
+        DXF_LAYER* laytab;  ! Inported layertable
+        INT        laymax;  ! Number of entries in laytab (may not be actual size)
+        INT        count;   ! Elements added to store (counting groups as 1)
+        INT        total;   ! Total elements added to store
+        D_PT       pgmax;   ! Page top right
+        D_PT       pgmin;   ! page bottom left
+        DOUBLE     scale;   ! Conversion factor
+        D_PT       offset;  ! Conversion offset
+        INT        process; ! TRUE if proccessing required (INSERT)
+        D_PT       hotspot; ! Point of hotspot for block (rotation centre)
+        D_PT       blkpos;  ! Position in drawing of blocks hotspot
+        DOUBLE     xscale;  ! Block x scale factor
+        DOUBLE     yscale;  ! Block y scale factor
+        DOUBLE     sin;     ! Sin of rotation angle
+        DOUBLE     cos;     ! Cos of rotation angle
+        DOUBLE     deg_rad; ! Used to convert degrees to radians
+        DOUBLE     angbase; ! base angle in degrees
+        INT        angdir;  ! 0 = anticlockwise, 1 = clockwise
+        TEXT       clayer[UNAME_MAX_Z]; ! Default layer name
+        BYTE       snapon;  ! TRUE if snap on
+        BYTE       gridon;  ! TRUE if grid on
+        UINT       snapspc; ! Snap spacing
+        UINT       gridspc; ! Grid spacing
+        INT        vportok; ! TRUE after reading first active viewpoint
+        ! Debugging only
+        INT trace;
+    }
+}
+
+!***************************************************************************
+!*  dxfescdlg  Cancel export/import dialog
+!*  ~~~~~~~~~
+
+CLASS dxfescdlg dlgbox
+{
+    REPLACE dl_set_size
+    REPLACE dl_key
+    ADD dxfdl_update
+    CONSTANTS
+    {
+        DXFESCDLG_DESC     1
+        DXFESCDLG_PROGRESS 2
+    }
+}
+
+! End of VECDXF.CAT

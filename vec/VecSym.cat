@@ -1,0 +1,131 @@
+!* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+!* Project: VECTOR FOR THE PSION 3a          *  Written by: Nick Matthews  *
+!*  Module: SYMBOL DYL OOP CATAGORY FILE     *  Date Started: 20 Jan 1997  *
+!*    File: VECSYM.CAT      Type: PSION CAT  *  Date Revised: 20 Jan 1997  *
+!* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+!   Copyright (c) 1997, Nick Matthews
+
+LIBRARY vecsym
+
+EXTERNAL olib
+EXTERNAL hwim
+
+INCLUDE epoc.h
+INCLUDE hwimman.g
+INCLUDE vector.g
+
+!***************************************************************************
+!*  symw  Main Symbol Selection window.
+!*  ~~~~
+
+CLASS   symw   dlgchain
+{
+    REPLACE destroy
+    REPLACE wn_init
+    REPLACE wn_draw
+    REPLACE wn_key
+    ! Members for displaying variable text
+    ADD syw_library
+    ADD syw_name
+    ADD syw_scale
+    ADD syw_rotate
+    ADD syw_mirror
+    ADD syw_create
+    ADD syw_view_scale
+    TYPES
+    {
+        typedef struct
+        {
+            P_RECT rect;
+            WORD str_id;     ! Optional
+            WORD type;       ! See popup.h for types
+            WORD style;      ! Meaning depends on type
+        } PU_CTRL;
+        typedef struct
+        {
+            P_EXTENT frame;
+            WORD count;
+            PU_CTRL list[1];
+        } POPUP;
+    }
+    CONSTANTS
+    {
+        ! Control types
+        PU_CTRL_STATIC       0
+        PU_CTRL_BUTTON       1
+        PU_CTRL_FRAME        2
+        PU_CTRL_TEXT         3
+        ! Button & Frame states
+        PU_STATE_ACTIVE      0
+        PU_STATE_DOWN        1   ! Only applies to buttons
+        PU_STATE_DISABLED    3
+        ! Static text styles
+        PU_TEXT_RIGHT        1    ! G_TEXT_ALIGN_RIGHT
+        PU_TEXT_LEFT         2    ! G_TEXT_ALIGN_LEFT
+        PU_TEXT_CENTRE       4    ! G_TEXT_ALIGN_CENTRE
+        ! Frame styles
+        PU_FRAME_LIGHT       0
+        PU_FRAME_MEDIUM      1
+        PU_FRAME_HEAVY       2
+    }
+    PROPERTY
+    {
+        POPUP*   pu;         ! Pointer to popup struct from resource file
+        INT      BlackBM;    ! Black bitmap to draw to
+        INT      GreyBM;     ! Grey bitmap to draw to
+        EL_LINK* pLink;      ! Pointer to the link under construction
+        INT*     pRet;       ! Address of INT to write a return value to.
+        INT      BtnDown;    ! Show this button as pressed
+        UBYTE    Symbol[EL_BUFSIZE]; ! Copy of the current symbol
+        ARECT    OrigScrn;   ! Copy of original Drg settings, for resetting
+        SWORD    OrigUpp;
+        UWORD    OrigLayMask;
+        INT      ViewScale;  ! Current viewing scale
+        LKSET    lkset;      ! Current link settings
+        SYMSET*  pSymset;    ! Settings dialog values
+    }
+}
+
+!***************************************************************************
+!*  slibdlg  Select symbol library dialog
+!*  ~~~~~~~
+
+CLASS slibdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+    TYPES
+    {
+        typedef struct
+        {
+            PR_VASTR* vastr;  ! List of available libraries
+            INT current;      ! Initial index to vastr
+            INT nsel;         ! Selected lib, index to Drg->drg.LibList
+        } SLIBDLG_DATA;
+    }
+}
+
+!***************************************************************************
+!*  ssymdlg  Select symbol dialog
+!*  ~~~~~~~
+
+CLASS ssymdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+    ! NOTE: Uses the SLIBDLG_DATA structure
+}
+
+!***************************************************************************
+!*  symsetdlg  Symbol settings dialog
+!*  ~~~~~~~~~
+
+CLASS symsetdlg  dlgbox
+{
+    REPLACE dl_item_new
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+}
+
+! End of VECSYM.CAT

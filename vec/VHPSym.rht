@@ -1,0 +1,29 @@
+# Symbols
+
+The 'Select Symbol' window shows the symbols using the same
+Zoom setting as the drawing, providing this will fit the
+viewing window. Symbols that are too large to display are
+scaled down to fit. The 'Viewing scale' shows the amount of
+scaling.
+
+Whilst viewing the Symbol selector you may use followings
+keys:
+
+    Select symbol: Left or Right Arrow
+    Show symbol list: Menu
+    Change library: Diamond
+    Change Settings: Tab
+    Rotate by 90 deg: Up or Down Arrow
+    Rotate 180 deg: F
+    Horizontal flip: H
+    Vertical flip: V
+
+Use the 'Symbol settings' dialog, 'Create' entry to
+determine whether to create a symbol duplicate or a link to
+the library copy. If set to Duplicate, then the drawing
+elements that make up the symbol will be copied to the
+drawing and bound as a Group, just as if it had been drawn
+directly. Creating a Link to the symbol will record just a
+reference to the library file, which must be available when
+drawing the symbol.
+

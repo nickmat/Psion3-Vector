@@ -1,0 +1,678 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *  Project: Vector - Vector graphics system *  Written by: Nick Matthews  *
+ *   Module: Vector file specification       *  Date Started: 20 Mar 1997  *
+ *     File: VecFile.h     Type: C Header    *  Date Revised:  6 May 1997  *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+    Copyright (c) 1997, Nick Matthews
+
+ Vector File Specification
+ ~~~~~~~~~~~~~~~~~~~~~~~~~
+  A Vector file consists of 4 sections:-
+    1.  Header      A fixed size obligatory header
+    2.  Settings    Optional, current program settings
+    3.  Tables      Zero or more tables of type T_???
+    4.  Elements    Zero or more drawing elements of type V_???
+
+
+ Revision History
+ ~~~~~~~~~~~~~~~~
+*/
+
+#ifndef VECFILE_H
+#define VECFILE_H
+
+#define VECTOR_SIG     "kcVectorDrawing"
+#define SIGNITURE_SIZE  16  /* File signiture size */
+#define FILE_VERSION   100  /* File format identification */
+/*#define SET_VERSION    101 */ /* Program settings identification */
+#define BYTES_MAX      200  /* Maximum number of bytes in element */
+#define POINTS_MAX      60  /* Maximum number of points in an element */
+#define GROUP_MAX      200  /* Maximum number of elements in a group */
+#define UNAME_MAX       15  /* User defined name, without trailing zero */
+#define UNAME_MAX_Z     16  /* User defined name, zero terminated */
+#define LNAME_MAX        8  /* Link file name, without trailing zero */
+#define LNAME_MAX_Z     10  /* Link file name, trailing zero, even length */
+#define SNAME_MAX       20  /* Symbol name length, without trailing zero */
+#define SNAME_MAX_Z     22  /* Symbol name, trailing zero, even length */
+
+#define TRIG_DIV    0x4000
+#define FLIP_FLAG   0x8000
+
+#define T_NULL        0  /* Null table */
+#define T_SYMBOLS     1  /* TE_SYM  Index to defined symbols */
+#define T_LIBRARY     2  /* TE_LIB  Librarys referenced by symbols */
+#define T_ATTRIBUTES  3  /* TE_??   Attributes referenced by elements */
+#define T_TRANSLATION 4  /* TE_??   Not yet used */
+#define T_LAYERS      5  /* Delimited list. List of Layer details */
+#define T_CHAR_LIST   6  /* TE_CHAR Index to defined font characters */
+#define T_FONT        7  /* TE_FONT Fonts referenced by elements */
+#define T_TEXT_STYLE  8  /* TE_TSTYLE Table of available text styles */
+
+#define V_NULL        0  /* Null element */
+#define V_LINE        1  /* EL_LINE   Line */
+#define V_POLYLINE    2  /* EL_PLINE  Polyline */
+#define V_POLYGON     3  /* EL_PLINE  Polygon */
+#define V_CIRCLE      4  /* EL_CIRCLE Circle */
+#define V_3PT_ARC     5  /* EL_3PT    Circular 3 point Arc */
+#define V_BOX         6  /* EL_LINE   Rectangular box (internal only) */
+#define V_ARC         7  /* EL_ARC    Circular radius & angles Arc */
+#define V_LINK       16  /* EL_LINK   Link to a symbol */
+#define V_TEXT       17  /* EL_TEXT   Text line, linked to a font */
+#define V_GROUP      32  /* EL_GROUP  Following are part of group */
+#define V_SYMBOL     33  /* EL_SYM    Following are part of symbol */
+#define V_CHARACTER  34  /* EL_CHAR   Following are part of a font char */
+#define V_DIM_HORIZ  64  /* EL_DIM    Horizontal dimension */
+#define V_DIM_VERT   65  /* EL_DIM    Vertical dimension */
+#define V_DIM_ALIGN  66  /* EL_DIM    Aligned dimension */
+#define V_DIM_ANGLE  67  /* EL_ANG    Angular dimension */
+#define V_DIM_RAD    68  /* EL_RAD    Radius dimension */
+#define V_DIM_DIA    69  /* EL_DIA?   Diameter dimension */
+
+#define SIZEOF_SYMHDR    26  /* Header up to boundry rect */
+#define SIZEOF_SYMBOLHDR sizeof(EL_SYMBOLHDR)  /* Excludes attach pts */
+#define SIZEOF_TEXT0     21  /* Header up to text OBSOLETE */
+#define SIZEOF_TEXT1     27  /* Header up to text OBSOLETE */
+#define SIZEOF_TEXTHDR   ( sizeof(EL_TEXTHDR) - 1 ) /* Text element excluding text */
+
+/* Basic types, as used in Vector Files */
+#ifdef PSION_3A
+#define PSION
+#endif
+
+#ifdef PSION_SI
+#define PSION
+#endif
+
+#ifdef PSION
+  typedef signed char         SBYTE;    /* Signed 8 bit */
+  typedef short               SWORD;    /* Signed 16 bit */
+  typedef long               SDWORD;    /* Signed 32 bit */
+#else
+  typedef signed char         SBYTE;    /* Signed 8 bit */
+  typedef unsigned char       UBYTE;    /* Unsigned 8 bit */
+  typedef short               SWORD;    /* Signed 16 bit */
+  typedef unsigned short      UWORD;    /* Unsigned 16 bit */
+  typedef long               SDWORD;    /* Signed 32 bit */
+#endif
+
+typedef UWORD   AUNIT;     /* Absolute unit */
+typedef SDWORD LAUNIT;     /* Large absolute unit */
+typedef SWORD   RUNIT;     /* Relative unit */
+
+typedef struct A_PT      /* Absolute point */
+{
+    AUNIT x;
+    AUNIT y;
+} A_PT;
+
+typedef struct LA_PT      /* Large Absolute point */
+{
+    LAUNIT x;
+    LAUNIT y;
+} LA_PT;
+
+typedef struct R_PT      /* Relative point */
+{
+    RUNIT x;
+    RUNIT y;
+} R_PT;
+
+typedef struct ARECT     /* Absolute rectangle */
+{
+    A_PT pos;
+    A_PT lim;
+} ARECT;
+
+typedef struct RRECT     /* Relative rectangle */
+{
+    R_PT pos;
+    R_PT lim;
+} RRECT;
+
+typedef struct SCALE
+{
+    UBYTE q;
+    UBYTE d;
+} SCALE;
+
+typedef struct ANGLE      /* Angle as Sin and Cos * TRIG_DIV */
+{
+    SWORD sin;
+    SWORD cos;
+} ANGLE;
+
+typedef struct LKSET      /* Link Settings */
+{
+    UWORD smul;
+    UWORD sdiv;   /* or'ed with FLIP_FLAG */
+    ANGLE a;
+} LKSET;
+
+typedef struct VECHDR    /* File header */
+{
+    UBYTE sig[SIGNITURE_SIZE];  /* = kcVectorDrawing/0 */
+    UWORD version;      /* Vector File specification number */
+    UWORD hdrsize;      /* Sizeof(VECHDR) + Settings section */
+    UWORD program;      /* Program version reference */
+    UWORD dataoffset;   /* hdrsize + Tables section (check value) */
+    UWORD tablecount;   /* Number of tables in Table section */
+} VECHDR;
+
+
+typedef struct TBHDR      /* Table header */
+{
+    UWORD size;
+    UWORD type;
+} TBHDR;
+
+typedef UWORD TE_SYM;     /* T_SYMBOLS Symbol definition table entry */
+
+typedef struct SYMSET     /* Symbol library default settings */
+{
+    SCALE scale;
+    ANGLE rotate;
+    UBYTE mirror;
+    UBYTE create;
+} SYMSET;
+
+/* Flip flags for SYMSET.mirror */
+#define FLIP_HORIZONTAL  0x01
+#define FLIP_VERTICAL    0x02
+
+typedef struct TE_LIB     /* T_LIBRARY Library table indexed by V_LINK */
+{
+    UBYTE name[LNAME_MAX];
+    SYMSET setting;
+} TE_LIB;
+
+typedef UWORD TE_CHAR;    /* Font Character definition table entry */
+
+typedef struct TE_FONT    /* T_FONT Font file table entry index by V_TEXT */
+{
+    UBYTE name[LNAME_MAX];
+} TE_FONT;
+
+typedef struct TE_TSTYLE  /* T_TEXT_STYLE Text style table entry */
+{
+    UBYTE font;     /* Index to Font table */
+    UBYTE units;    /* Units used to set size */
+    LKSET set;      /* Link settings to use */
+    SWORD slant;    /* Oblique angle */
+    UBYTE name[UNAME_MAX_Z];   /* Users identification name */
+} TE_TSTYLE;
+
+/* Data Store Elements */
+
+typedef struct ELHDR   /* Element header */
+{
+    UBYTE size;
+    UBYTE type;
+    UBYTE attr;
+    UBYTE layer;
+} ELHDR;
+
+typedef struct EL_LINE   /* Element with two points */
+{
+    ELHDR hdr;
+    A_PT  beg;
+    A_PT  end;
+} EL_LINE;
+
+typedef struct EL_PLINE  /* Multiple point element */
+{
+    ELHDR hdr;
+    A_PT  beg;
+    A_PT  pt[POINTS_MAX-1];
+} EL_PLINE;
+
+typedef struct EL_CIRCLE  /* Circular Element */
+{
+    ELHDR hdr;
+    A_PT  centre;
+    AUNIT radius;
+} EL_CIRCLE;
+
+typedef struct EL_ARC    /* Circular Arc (2 angles) element */
+{
+    ELHDR hdr;
+    A_PT  centre;
+    AUNIT radius;
+    ANGLE beg;
+    ANGLE end;
+} EL_ARC;
+
+typedef struct EL_LARC  /* Large arc (internal only) */
+{
+    ELHDR  hdr;
+    LA_PT  centre;
+    LAUNIT radius;
+    ANGLE  beg;
+    ANGLE  end;
+} EL_LARC;
+
+typedef struct EL_3PT    /* Three point Element (arc) */
+{
+    ELHDR hdr;
+    A_PT  beg;
+    A_PT  mid;
+    A_PT  end;
+} EL_3PT;
+
+typedef struct EL_4PT    /* 4 point Element (Box polygon) */
+{
+    ELHDR hdr;
+    A_PT  pt[4];
+} EL_4PT;
+
+
+typedef struct EL_TEXT   /* Line of text element */
+{
+    ELHDR hdr;
+    A_PT  pos;      /* Position of first char */
+    RRECT box;      /* Bounding box, relative to pos */
+    LKSET set;      /* Size, angle & flip settings */
+    SWORD slant;    /* Oblique angle */
+    UBYTE font;     /* Index to font table */
+    UBYTE text[BYTES_MAX]; /* Character array (NOT zero terminated) */
+} EL_TEXT;
+
+typedef struct EL_TEXTHDR /* Just the header part of an EL_TEXT element */
+{
+    ELHDR hdr;
+    A_PT  pos;
+    RRECT box;   /* Bounding box, relative to pos */
+    LKSET set;
+    SWORD slant;
+    UBYTE font;
+    UBYTE text; /* 1st char only */
+} EL_TEXTHDR;
+
+typedef struct EL_LINK
+{
+    ELHDR hdr;
+    A_PT  pos;   /* Position of hot spot */
+    RRECT box;   /* Bounding box, relative to pos */
+    LKSET set;   /* Size, angle & flip settings */
+    UBYTE lib;   /* Index into library table */
+    UBYTE sym;   /* Zero in file, index into table in library file */
+    UWORD ref;   /* Reference to symbol in library file */
+} EL_LINK;
+
+typedef struct ELGRP
+{
+    UBYTE size;
+    UBYTE type;
+    UBYTE count;
+    UBYTE flags;
+} ELGRP;
+
+typedef struct EL_GROUP  /* Start of group elements */
+{
+    ELGRP grp;
+} EL_GROUP;
+
+typedef struct EL_SYMBOL   /* Start of symbol elements */
+{
+    ELGRP grp;
+    UWORD ref;
+    UBYTE name[SNAME_MAX];
+    ARECT bound;
+    A_PT  hot;
+    A_PT  attach[POINTS_MAX-10];
+} EL_SYMBOL;
+
+typedef struct EL_SYMBOLHDR   /* Just the header part of a symbol */
+{
+    ELGRP grp;
+    UWORD ref;
+    UBYTE name[SNAME_MAX];
+    ARECT bound;
+    A_PT  hot;
+} EL_SYMBOLHDR;
+
+typedef struct EL_CHAR  /* Start of Character elements */
+{
+    ELGRP grp;
+    UBYTE ref;       /* ASCII number */
+    UBYTE spare;
+    AUNIT pitch;     /* Distance to move the text cursor on by */
+    ARECT bound;
+    A_PT  hot;
+} EL_CHAR;
+
+/* Combined element union */
+
+typedef union ELEM
+{
+    UBYTE     size;
+    ELHDR     hdr;
+    ELGRP     grp;
+    EL_LINE   line;
+    EL_PLINE  pline;
+    EL_CIRCLE circle;
+    EL_ARC    arc;
+    EL_LARC   larc;
+    EL_3PT    el3pt;
+    EL_4PT    el4pt;
+    EL_LINK   link;
+    EL_TEXT   text;
+    EL_SYMBOL sym;
+    EL_CHAR   ch;
+    UBYTE     buf[256];
+} ELEM;
+
+#endif  /* VECFILE_H */
+General data types
+        typedef short unsigned int AUNIT;  /* Absolute unit */
+        typedef short int          RUNIT;  /* Relative unit */
+        typedef short unsigned int SUNIT;  /* Screen unit */
+        typedef short unsigned int DUNIT;  /* Display unit */
+        typedef short unsigned int OANGLE; /* Octant angle, see below */
+        typedef long unsigned int ALUNIT;  /* Extended Absolute unit */
+        typedef struct                     /* Absolute point */
+        {
+            AUNIT x;
+            AUNIT y;
+        } A_PT;
+        typedef struct                     /* Relative point */
+        {
+            RUNIT x;
+            RUNIT y;
+        } R_PT;
+        typedef struct                     /* Absolute rectangle */
+        {
+            A_PT pos;
+            A_PT lim;
+        } ARECT;
+        typedef struct                     /* Alternative rectangle */
+        {
+            A_PT pos;
+            AUNIT width;
+            AUNIT height;
+        } AEXTENT;
+
+File Data Structure
+
+  1) Header.  Standard Psion style header. Signiture is kcVectorDrawing
+
+  2) Extended Header.
+        UWORD Offset to Data from start of file
+        UWORD Number of tables
+        All other properties of the vec class
+
+  3) Tables.  (All tables are optional)
+
+        For each table TBHDR structure:-
+            UWORD size;     Size of table (Not including header)
+            UWORD table;    Table ID
+
+     Table ID:-
+
+     T_SYMBOL_LIST   1    Symbol table (always the 1st table)
+         TBENT_SYM struct (same internally and externally)
+             WORD pos;  Handle of the symbol element
+
+     T_ATTRIBUTES    3    Attribute table  nyd
+
+     T_TRANSLATION   4    Translation table  nyd
+
+     T_LIBRARY       2    List of links to to symbol libraries
+         TBENT_LIB
+            UWORD ucount;    ! User count
+            VOID* pfcb;      ! Pointer to file control block
+                             ! NULL if file not open
+            UWORD data;      ! File offset to Data
+            UWORD symlist;   ! File offset to Symbol table
+            UWORD attrlist;  ! File offset to Attribute table
+            TEXT  name[14];  ! Filename (ext but no path)
+
+
+
+  4) Data. Element records as detailed below
+
+  Data Elements
+
+  4.1) Drawable Elements
+
+    Element header  ELHDR
+        UBYTE size;    Size of record
+        UBYTE type;    Drawing Element type, see below
+        UBYTE attr;    Index into Attribute table
+        UBYTE layer;   Low nibble Layer index. Hi nibble Temp flags.
+
+    Record structure EL_LINE
+        ELHDR hdr;
+        A_PT  beg;
+        A_PT  end;
+
+    Record structure EL_PLINE
+        ELHDR hdr;
+        A_PT  beg;
+        A_PT  pt[EL_MAXPT];  Calculate number of points used from hdr.size
+
+    Record structure EL_CIRCLE
+        ELHDR hdr;
+        A_PT  centre;
+        AUNIT radius;
+
+    Record structure EL_ARC
+        ELHDR hdr;
+        A_PT  centre;
+        AUNIT radius;
+        ANGLE beg;
+        ANGLE end;
+
+    Record structure EL_3PT
+        ELHDR hdr;
+        A_PT  beg;
+        A_PT  mid;
+        A_PT  end;
+
+    Record structure LKSET
+        UWORD smul;
+        UWORD sdiv;    Also contains FLIP flag to give mirror image.
+        SWORD asin;
+        SWORD acos;
+
+    Record structure EL_TEXT
+        ELHDR hdr;
+        A_PT  pos;
+        A_PT  box;
+        LKSET set;
+        UBYTE font;
+        UBYTE text[EL_MAXTEXT]; Calc length from hdr.size, not zero terminated.
+
+4.2) Link records
+
+    Record structure EL_LINK
+        UBYTE size;     ! 30
+        UBYTE type;     ! V_SYM_LINK
+        UBYTE lib;      ! Index to Library Table
+        UBYTE layer;    ! Low nibble Layer index. Hi nibble Temp flags.
+        A_PT  hot;      ! Hot spot
+        A_PT  bound[4]; ! Position of bounding rect
+        UWORD ref;      ! Reference number of symbol in library
+        UBYTE index;    ! Index to an internal symbol table (Zero in file)
+        UBYTE flags;    ! Flip flags FLIP_HORIZONTAL & FLIP_VERTICAL
+        UBYTE base;     ! Scaling base
+        UBYTE scale;    ! Scaling value
+        UWORD asin;     ! Rotation arcsin value
+        UWORD acos;     ! Rotation arccos value
+
+4.3) Aggregate Elements
+
+     Agregate header ELAGR
+        UBYTE size;     Size of record
+        UBYTE type;     Record type (Aggregates have bit 5 set)
+        UBYTE count;    Number of following elements in agregate
+                            Included aggregates count as one
+        UBYTE flags;    Always zero in file
+
+     Record structure  EL_GROUP same as a ELAGR struct
+
+     Record structure  EL_SYMBOL
+        ELGRP grp;
+        UWORD ref;       Reference number, used as the external reference
+        TEXT  name[32];  Symbol name, padded with zeros
+        ARECT bound;     Bounding rectangle
+        A_PT  hotspot;   Position of hot spot
+        A_PT  attach[1]; Attach points, actual number calc from size:-
+                           Number of attached points = (size-50)/4;
+
+     Record structure  EL_CHAR
+        ELGRP grp;
+        UBYTE ref;       Reference number, ASCII character
+        UBYTE spare;     Keep header word aligned
+        AUNIT pitch;     Move text cursor on by this amount
+        ARECT bound;     Bounding rectangle
+        A_PT  hot;       Position of hot spot
+
+  Data element types
+    V_NULL        0 Invalid element number, can be used as a marker
+    V_LINE        1 Straight line, an EL_LINE structure
+    V_POLYLINE    2 Joined straight lines, an EL_PLINE structure
+    V_POLYGON     3 Closed straight line figure, an EL_PLINE structure
+    V_CIRCLE      4 Full circle, an EL_CIRCLE structure
+    V_3PT_ARC     5 Circular 3 point arc, an EL_3PARC structure
+  * V_BOX         6 Rectangular box, an EL_LINE structure
+    V_ARC         7 Circular arc, centre & 2 angles, an EL_ARC struct
+
+    V_LINK       16 Link to an internal symbol, an EL_LINK structure
+    V_TEXT       17 Line of Text, Links to a font, an EL_TEXT
+
+    V_GROUP      32 Joins the following elements to a group, an EL_GROUP
+    V_SYMBOL     33 Turns the following elements into a symbol an EL_SYMBOL
+    V_CHARACTER  34 Turns following elements into a font character, EL_CHAR
+
+  * Drawable but not storable for the current version.
+
+Attributes
+   All drawable elements (ie not aggregates or links) point to the attribute
+   table, which is an array of ATTR structures
+
+    struct ATTR
+        UBYTE flags;    Overide flags
+        UBYTE width;    Width in Pixels or AUNIT (Max width 3 pixel or 2.54mm)
+        UBYTE style;    Index to a style table
+        UBYTE color;    Index to a colour palette or a colour number.
+
+        TEXT name[NAME_MAX+1];   Users identification name
+
+    All text link elements (V_TEXT) point to a font table which is an array
+    of FONT structures.
+
+    struct FFILE
+        VOID* pfcb;     Pointer to file control block, NULL if not open
+        UWORD data;     File offset to data store
+        UWORD chlist;   File offset to character table
+        TEXT fname[14]; File name without path
+        ATTR* fattr;    Copy of file attribute table
+
+    struct FONT
+        UBYTE ffile;    Font File index
+        UBYTE oride;    Attribute overide flags
+        ATTR  oattr;    Over-ride attributes
+
+    struct TSTYLE
+        UBYTE font;     Index to Font table
+        UBYTE spare;
+        LKSET set;      Link settings to use
+        TEXT name[UNAME_MAX+1];   Users identification name
+
+
+
+Future additions
+
+     Record structure EL_2AARC  (Alternative form for Arc) nyi
+        ELHDR  hdr;
+        A_PT   centre;
+        ALUNIT radius;
+        ANGLE  beg;
+        ANGLE  end;
+
+     Record structure EL_CLINE  nyi
+        ELHDR  hdr;
+        A_PT   pt;
+        ANGLE  angle;
+
+    V_ATTACH_PT  ? An attach point EL_PT struct nyi
+    V_ELLIPSE    ? Full ellipse, nyi
+    V_E_ARC      ? Elliptical arc, nyi
+    V_2A_ARC     ? Circular radius & 2 angles arc, a EL_2AARC, nyi
+    V_1E_CLINE   ? Single ended construction line, a EL_CLINE, nyi
+    V_0E_CLINE   ? Zero ended construction line, a EL_CLINE, nyi
+    V_O_BSPLINE  ? Open cubic B-Spline curve, nyi
+    V_C_BSPLINE  ? Closed cubic B_Spline curve, nyi
+    V_4P_BEZIER  ? Cubic (4pt) open Bezier curve nyi
+
+  Attribute index, obtains
+    Name (Not used in drawing element)
+    Colour
+    Style (Solid, Dashed etc.)
+    Thickness
+
+  Layer, Low nibble
+    Layer number 0 to 15
+
+  Layer, High nibble
+    This is always 0 when saving to file
+    In memory it may be
+        BAND_LAYER    Drawing is controlled be the drg.BandLayer property
+
+Group.  A group record joins the elements that immediately follow into a
+        group. The group count gives the number of records to be included.
+        A group within a group is counts as one. There is a maximum of
+        200 elements in a group but since this can include further groups,
+        the actual number is not fixed.
+
+        The only affect a group has is when making a selection; either all
+        elements in a group are selected or none.
+
+Symbol. A symbol is similar in that it joins the following elements together
+        but it also holds addition information (see the EL_SYMBOL record
+        structure). In addition, a symbol table is held that holds the
+        element handle of all symbols in the file. All symbols are normally
+        held as the first elements in the file. (This is to avoid the symbol
+        table becomming out of date every time the Data store is altered.)
+        This is not a requirement however.
+
+        Most operations cannot be performed on a symbol, these include any
+        operation that would affect the size of the bounding rectangle, such
+        as Rotate or Scale. Safe operations are Move and Copy (Which creates
+        a Group copy, not another Symbol). Changing the reference number will
+        result in all external links with the symbol being broken.
+
+Font.
+
+Not Used
+OANGLE type  (Currently used internally for the display of Arcs)
+  Packed Word  b0-b13 = OctAng, b14-b15 = OctNum
+  OctNum: Octant Number, starting from 0 at the pos x coordinate
+          and counting in the anti-clockwise direction.
+  OctAng: The Sin or Cos of the angle times OCTCONST (11583), see below.
+
+  Converting OANGLE values
+  OctNum    Formula to convert to Angle (degres)
+    0       arcsin( (OctAng+1)/OCTCONST )
+    1       arccos( (OctAng+1)/OCTCONST )
+    2       arcsin( (OctAng+1)/OCTCONST ) + 90
+    3       arccos( (OctAng+1)/OCTCONST ) + 90
+    4       arcsin( (OctAng+1)/OCTCONST ) + 180
+    5       arccos( (OctAng+1)/OCTCONST ) + 180
+    6       arcsin( (OctAng+1)/OCTCONST ) + 270
+    7       arccos( (OctAng+1)/OCTCONST ) + 270
+
+Note: An OANGLE is acurate to the 100th of a degree
+
+Draw Routines
+~~~~~~~~~~~~~
+Element Attributes (Internal only)
+typedef struct
+{
+    HANDLE hBitmap;
+    INT    mode;
+    INT    width;
+    VOID*  dash;
+} DATTR;
+

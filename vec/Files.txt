@@ -1,0 +1,146 @@
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Project: VECTOR FOR THE PSION 3a/3c       *  Written by: Nick Matthews  *
+ *  Module: LIST OF ALL SOURCE AND INF FILES *  Date Started: 27 Aug 1996  *
+ *    File: FILES.TXT       Type: ASCII TEXT *  Date Revised: 27 Oct 1998  *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+Added for P1.20
+ VECXCH.H      File exchange DYL constants
+ VEC.H         Main global and magic variables
+
+ VECQCD.CAT    QuickCAD file exchange DYL catorgory file
+ VECQCD.PR     QuickCAD file exchange DYL project file
+ VECQCDIM.C    QuickCAD import function
+ VECQCDEX.C    QuickCAD export function
+ VECQCD.RSI    QuickCAD resource file
+
+ VECDXF.CAT    DXF file exchange DYL catorgory file
+ VECDXF.PR     DXF file exchange DYL project file
+ VECDXFOB.C    DXF class general functions
+ VECDXFIM.C    DXF import function
+ VECDXFEX.C    DXF export function
+ VECDXF.RSI    DXF resource file
+
+ HISTORY_.TXT  Current beta history notes
+
+ VECUDLG.C     Set units and scale dialog class
+ VECSCALE.C    Scale conversion functions
+ VECDIM.C      Dimension drawing functions
+
+Text files
+
+ FILES.TXT     List of all source and information files, this file.
+ VECSPEC.TXT   Program notes and specification
+ VECFILE.TXT   Vector file format description
+ VECTODO.TXT   Outstanding work required
+
+ VECTOR.MAK    Project Makefile for use with Borland Make
+ VECTOR.PR     TopSpeed program project file
+ VECSYM.PR     Select Symbol dyl project file
+ VECBLD.PR     Build classes dyl project file
+
+ VECTOR.CAT    Psion OOP class catagory definitions.
+ VECFILE.H     File format definitions and structures
+ VECTOR.H      Project wide header file
+ VECDEBUG.H    Switch debug tracing on/off
+ VECPCX.H      PCX bitmap file header
+
+ VECMAIN.C     Main and class member functions
+ VECABOUT.C    About and registration dialogs
+ VECMISC.C     General functions
+ VECCALC.C     Calculations using doubles
+ VECDRAW.C     Basic drawing functions
+ VECTEXT.C     Text line link drawing functions
+ VECDWIN.C     Drawing Window class members
+ VECIWIN.C     Information Window class members
+ VECSWIN.C     Scroll bar windows class members
+ VECCOM.C      Command subclass (veccm) members
+ VECDATA.C     Main data store class members
+ VECDRG.C      Drawing class member functions
+ VECBAND.C     Rubber Band visual drawing class members
+ VECFILE.C     Drawing file class member functions
+ VECUNDO.C     Undo and Redo class member functions
+ VECDLG.C      General dialog classes
+ VECLDLG.C     Layer setting dialog classes
+ VECTDLG.C     Text style dialogs classes
+ VECLOCS.C     Local file scan classes
+ VECSADLG.C    Save as dialog class
+ VECPAGE.C     Set page and margins dialog classes
+ VECPRINT.C    Print setup dialog class
+ VECPLOT.C     Print and plotting classes
+
+ KCMACROS.INC  Standard include file macros for MS MASM assemblier.
+ VECTOR.INC    Project wide header file for assemblier
+ DRAWLINE.ASM  Draw staight line assembler
+ CIRCLE.ASM    Draw circles and arcs assembler
+ DRAWGRID.ASM  Draw Grid dots to bitmap
+ HYPOT.ASM     Calculate Square Roots and Hypotenuse from sides.
+ TRIG.ASM      Misc. trigonometry functions
+ PROCESS.ASM   Process moving point operations
+ CLEAR.ASM     Clear bitmaps functions
+
+ VECSYM.CAT    Select Symbol dyl category file
+ VSYMWIN.C     Select Symbol Window class members
+
+ VECBLD.CAT    Build dyl category file
+ VECBLD.H      Build classes header file
+ VECBUILD.C    Build drawing element class members
+ BLDSYM.C      Build a symbol link or copy class members
+ VECSEL.C      Select build class members
+ VECBREAK.C    Select and Break build class members
+ VECAGGR.C     Aggregate build class members
+ VECPROP.C     Property build class
+ VECPDLG.C     Property dialog classes
+
+ VECJUMP.C     Jump sub menu functions and dialogs
+ VECEXP.C      Export drawing to bitmap file
+
+ VECTOR.RE     Psion resource externals file used to create vector.rg
+ POPUP.RH      Popup resource structures header file
+ VECSYM.RE     Select symbol popup resource externals, creates vecsym.rg
+ VECBLD.RE     Build resource externals, creates vecbld.rg
+ VECTOR.RSS    Psion resource file, English version
+ VECSYM.RSI    Select symbol popup include resource file
+ VECBLD.RSI    Build classes include resource file
+
+ VECHELP.RHT   Resource Help Text used to create vechelp.rhi
+ VHPSTART.RHT  Getting started help page text
+ VHPMOVE.RHT   Moving around help page text
+ VHPSEL.RHT    Selection help page text
+ VHPINFO.RHT   Info window help page text
+ VHPKEYS.RHT   Keyboard shortcuts help page text
+ VHPREG.RHT    Registration help page text
+ VHPLIC.RHT    Licence help page text
+ VHPSUP.RHT    Technical support help page text
+ VHPSYM.RHT    Symbol help page text
+
+Files Shared with RegCode
+ REGREAD.H     Read Registration Code header
+ REGREAD.C     Read Registration Code function
+
+Binary files
+ VECTOR48.PCX  48*48 bit Vector Icon
+ DEFAULT.VFT   Default Vector Font file (built-in)
+
+Release Files:-
+
+Documentation files
+ README.TXT    Release notes
+ HISTORY.TXT   History of changes between versions
+ VPMANUAL.WRD  Vector manual in Psion Word format
+
+ README_.TXT   Release notes for beta versions
+
+Font files
+
+Library files
+ LOGIC.VSL     Electrical logic gates
+ ELECTRIC.VSL  Electrical symbols
+ SHAPES.VSL    Misc. shapes symbols
+ ASCII.VSL     The default font as symbols
+
+Example files
+ JKFF.VEC      JK Flip-Flop logic diagram
+ TRACTION.VEC  Steam traction engine.
+
+End of VECTOR.TXT file

@@ -1,0 +1,35 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Project: VECTOR FOR THE PSION EPOC16      *  Written by: Nick Matthews  *
+ *  Module: QuickCAD XCHANGE RESOURCE        *  Date Started: 20 May 1998  *
+ *    File: VECQCD.RSI      Type: PSION RSS  *  Date Revised: 20 May 1998  *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+    Copyright (c) 1998, Nick Matthews
+*/
+
+RESOURCE STRING sr_qcd_fileid1       { str = "QuickCAD Drawing"; }
+RESOURCE STRING sr_qcd_fileid2       { str = "Vector " VERSION " : RES %d"; }
+
+RESOURCE STRING sr_qcd_name_fmt      { str = "NM>%s"; }
+RESOURCE STRING sr_qcd_ent_fmt       { str = "%c%c> %d"; }
+RESOURCE STRING sr_qcd_plong_fmt     { str = "%c%c> %ld"; }
+RESOURCE STRING sr_qcd_nlong_fmt     { str = "%c%c>-%ld"; }
+RESOURCE STRING sr_qcd_str_fmt       { str = "%c%c>%s"; }
+RESOURCE STRING sr_qcd_neg_fmt       { str = "%c%c>-%d"; }
+
+RESOURCE STRING sr_qcd_true          { str = "%c%c> 0"; }
+RESOURCE STRING sr_qcd_false         { str = "%c%c>-1"; }
+
+
+/* NOTE: The source refers to these in the order that they appear */
+/* so don't make changes without checking */
+
+RESOURCE STRING sr_qcd_name          { str = "Line"; }
+RESOURCE STRING sr_qcd_box           { str = "Box"; }
+RESOURCE STRING sr_qcd_arc           { str = "Arc"; }
+RESOURCE STRING sr_qcd_circle        { str = "Circle"; }
+RESOURCE STRING sr_qcd_text          { str = "Text"; }
+RESOURCE STRING sr_qcd_number        { str = "Number"; }
+RESOURCE STRING sr_qcd_fill          { str = "Fill"; }
+
+/* End of VecQcd.rsi file */

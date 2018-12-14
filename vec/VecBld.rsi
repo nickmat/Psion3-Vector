@@ -1,0 +1,799 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Project: VECTOR FOR THE PSION 3a          *  Written by: Nick Matthews  *
+ *  Module: BUILD DYL RESOURCE INCLUDE       *  Date Started: 15 Apr 1997  *
+ *    File: VECBLD.RSS      Type: PSION RSS  *  Date Revised: 15 Apr 1997  *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+    Copyright (c) 1997, Nick Matthews
+*/
+
+/***************************************************************************
+ **  Element description strings
+ */
+
+/* Max length of strings = UNAME_MAX = 15 */
+RESOURCE STRING sr_v_line         { str = "Line"; }
+RESOURCE STRING sr_v_polyline     { str = "Polyline"; }
+RESOURCE STRING sr_v_polygon      { str = "Polygon"; }
+RESOURCE STRING sr_v_circle       { str = "Circle"; }
+RESOURCE STRING sr_v_3pt_arc      { str = "Arc (3pt)"; }
+RESOURCE STRING sr_v_box          { str = "Box"; }
+RESOURCE STRING sr_v_arc          { str = "Arc (cntr)"; }
+RESOURCE STRING sr_v_link         { str = "Symbol link"; }
+RESOURCE STRING sr_v_text         { str = "Text"; }
+RESOURCE STRING sr_v_group        { str = "Group"; }
+RESOURCE STRING sr_v_symbol       { str = "Symbol"; }
+RESOURCE STRING sr_v_character    { str = "Character"; }
+RESOURCE STRING sr_v_unknown      { str = "Unknown"; }
+RESOURCE STRING sr_v_selection    { str = "Selection"; }
+
+/* Error strings */
+RESOURCE STRING sr_text_too_long  { str = "Max text length reached"; }
+
+
+/***************************************************************************
+ **  CREATE_SYM_DIALOG  Create a new symbol dialog
+ **  ~~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG create_sym_dialog
+{
+    title = "Create symbol";
+    flags = DLGBOX_NOTIFY_ENTER;
+    controls =
+    {
+        CONTROL
+        {
+            class = C_EDWIN;
+            prompt = "Name";
+            info = EDWIN
+            {
+                str = "";
+                flags = IN_EDWIN_VULEN_CHARACTERS;
+                maxlen = SNAME_MAX;
+                vulen = 20;
+            };
+        },
+        CONTROL
+        {
+            class = C_NCEDIT;
+            prompt = "Reference";
+            info = NCEDIT
+            {
+                low = 1;
+                high = 32000;
+                current = 100;
+            };
+        }
+    };
+}
+
+RESOURCE STRING sr_ref_in_use  { str = "Ref number already used"; }
+
+
+/***************************************************************************
+ **  CREATE_FONT_CH_DIALOG  Create a new font character dialog
+ **  ~~~~~~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG create_font_ch_dialog
+{
+    title = "Create font character";
+    flags = DLGBOX_NOTIFY_ENTER;
+    controls =
+    {
+        CONTROL
+        {
+            class = C_NCEDIT;
+            prompt = "ASCII number";
+            info = NCEDIT
+            {
+                low = 0;
+                high = 255;
+                current = 32;
+            };
+        }
+    };
+}
+
+RESOURCE STRING sr_ascii_ref_in_use  { str = "Ascii number allocated"; }
+
+/***************************************************************************
+ **  AGGR_PROP_DIALOG  Show Selection and Group properties
+ **  ~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG aggr_prop_dialog
+{
+    title = "x";
+    flags = DLGBOX_ACTION_LIST | DLGBOX_NOTIFY_ENTER;
+    controls =
+    {
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Layer";
+            info = CHLIST{};  /* Choice list created dynamically */
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Items";
+            flags =  DLGBOX_ITEM_NOTIFY_CHANGED;
+            info = CHLIST{};  /* Choice list created dynamically */
+        },
+        CONTROL
+        {
+            class = C_ACLIST;
+            info = ACLIST { rid = grp_prop_btns; };
+        }
+    };
+}
+
+RESOURCE ACLIST_ARRAY grp_prop_btns
+{
+    button =
+    {
+        PUSH_BUT
+        {
+            keycode = W_KEY_RETURN;
+            str = "Accept";
+        },
+        PUSH_BUT
+        {
+            keycode = 'i';
+            str = "View item";
+        }
+    };
+}
+
+RESOURCE STRING sr_prop_title_fmt      { str = "%s property"; }
+RESOURCE STRING sr_prop_title_unit_fmt { str = "%s property (scale %s)"; }
+RESOURCE STRING sr_multiple            { str = "* Multiple *"; }
+
+/***************************************************************************
+ **  CHAR_PROP_DIALOG  Show Character properties
+ **  ~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG char_prop_dialog
+{
+    title = "x";
+    flags = DLGBOX_SMALL_ACTION_LIST | DLGBOX_NOTIFY_ENTER;
+    controls =
+    {
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Layer";
+            info = CHLIST {};  /* Choice list created dynamically */
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            prompt = "Hot spot"<WS_SYMBOL_ELLIPSIS>;
+            info = TXTMESS
+            {
+                str = "-9999.999, -9999.999";
+                flags = IN_TEXTWIN_POPOUT;
+            };
+        },
+        CONTROL
+        {
+            prompt = "Pitch";
+            class = C_EDWIN;
+            info = EDWIN
+            {
+                str = "";
+                maxlen = 9;
+            };
+        },
+        CONTROL
+        {
+            class = C_NCEDIT;
+            prompt = "ASCII number";
+            info = NCEDIT
+            {
+                low = 0;
+                high = 255;
+                current = 32;
+            };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Items";
+            flags =  DLGBOX_ITEM_NOTIFY_CHANGED | DLGBOX_ITEM_UNDERLINED;
+            info = CHLIST {};  /* Choice list created dynamically */
+        },
+        CONTROL
+        {
+            class = C_SMACLIST;
+            info = ACLIST { rid = grp_prop_sbtns; };
+        }
+    };
+}
+
+RESOURCE ACLIST_ARRAY grp_prop_sbtns
+{
+    button =
+    {
+        PUSH_BUT
+        {
+            keycode = 'a';
+            str = " Accept";
+        },
+        PUSH_BUT
+        {
+            keycode = 'i';
+            str = " View item";
+        }
+    };
+}
+
+/***************************************************************************
+ **  SYM_PROP_DIALOG  Show Symbol properties
+ **  ~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG sym_prop_dialog
+{
+    title = "x";
+    flags = DLGBOX_SMALL_ACTION_LIST | DLGBOX_NOTIFY_ENTER;
+    controls =
+    {
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Layer";
+            info = CHLIST {};  /* Choice list created dynamically */
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            prompt = "Hot spot"<WS_SYMBOL_ELLIPSIS>;
+            info = TXTMESS
+            {
+                str = "-9999.999, -9999.999";
+                flags = IN_TEXTWIN_POPOUT;
+            };
+        },
+/*
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Attach Pts";
+            info = CHLIST { rid = dummy_point_list; };
+        },
+*/
+        CONTROL
+        {
+            class = C_NCEDIT;
+            prompt = "Ref number";
+            info = NCEDIT
+            {
+                low = 0;
+                high = 60000;
+                current = 10;
+            };
+        },
+        CONTROL
+        {
+            prompt = "Name"<WS_SYMBOL_ELLIPSIS>;
+            class = C_TEXTWIN;
+            info = TXTMESS
+            {
+                str = "";
+                flags = IN_TEXTWIN_POPOUT;
+            };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Items";
+            flags =  DLGBOX_ITEM_NOTIFY_CHANGED | DLGBOX_ITEM_UNDERLINED;
+            info = CHLIST {};  /* Choice list created dynamically */
+        },
+        CONTROL
+        {
+            class = C_SMACLIST;
+            info = ACLIST { rid = sym_prop_sbtns; };
+        }
+    };
+}
+
+RESOURCE DIALOG sym_name_dialog
+{
+    title = "Symbol name";
+    flags = DLGBOX_NOTIFY_ENTER | DLGBOX_RBUF_FILLED;
+    controls =
+    {
+        CONTROL
+        {
+            prompt = "Name";
+            class = C_EDWIN;
+            info = EDWIN
+            {
+                str = "";
+                flags = IN_EDWIN_VULEN_CHARACTERS;
+                maxlen = SNAME_MAX;
+                vulen = 16;
+            };
+        }
+    };
+}
+
+RESOURCE ACLIST_ARRAY sym_prop_sbtns
+{
+    button =
+    {
+        PUSH_BUT
+        {
+            keycode = 'a';
+            str = " Accept";
+        },
+/*
+        PUSH_BUT
+        {
+            keycode = 'p';
+            str = " Edit pts";
+        },
+*/
+        PUSH_BUT
+        {
+            keycode = 'i';
+            str = " View item";
+        }
+    };
+}
+
+RESOURCE STRING sr_none            { str = "None"; }
+RESOURCE STRING sr_no_attached_pts { str = "No attached points"; }
+
+/***************************************************************************
+ **  LINE_PROP_DIALOG  Show Line properties
+ **  ~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG line_prop_dialog
+{
+    title = "x";
+    flags = DLGBOX_NOTIFY_ENTER | DLGBOX_RBUF_FILLED;
+    controls =
+    {
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Layer";
+            info = CHLIST {};  /* Choice list created dynamically */
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            prompt = "Start"<WS_SYMBOL_ELLIPSIS>;
+            info = TXTMESS
+            {
+                str = "-9999.999, -9999.999";
+                flags = IN_TEXTWIN_POPOUT;
+            };
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            prompt = "Finish"<WS_SYMBOL_ELLIPSIS>;
+            info = TXTMESS
+            {
+                str = "-9999.999, -9999.999";
+                flags = IN_TEXTWIN_POPOUT;
+            };
+        }
+    };
+}
+
+/***************************************************************************
+ **  PLINE_PROP_DIALOG  Show Polyline/Polygon properties
+ **  ~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG pline_prop_dialog
+{
+    title = "x";
+    flags = DLGBOX_ACTION_LIST | DLGBOX_NOTIFY_ENTER | DLGBOX_RBUF_FILLED;
+    controls =
+    {
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Layer";
+            info = CHLIST{};  /* Choice list created dynamically */
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Points";
+            info = CHLIST { rid = dummy_point_list; };
+        },
+        CONTROL
+        {
+            class = C_ACLIST;
+            info = ACLIST { rid = pline_prop_btns; };
+        }
+    };
+}
+
+RESOURCE MENU dummy_point_list
+{
+    items =
+    {
+        CHOICE_ITEM { str = "-9999.999, -9999.999"; }
+    };
+}
+
+RESOURCE ACLIST_ARRAY pline_prop_btns
+{
+    button =
+    {
+        PUSH_BUT
+        {
+            keycode = W_KEY_RETURN;
+            str = "Accept";
+        },
+        PUSH_BUT
+        {
+            keycode = W_KEY_MENU;
+            str = "Edit pts";
+        }
+    };
+}
+
+/***************************************************************************
+ **  CIRCLE_PROP_DIALOG  Show circle properties
+ **  ~~~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG circle_prop_dialog
+{
+    title = "x";
+    flags = DLGBOX_NOTIFY_ENTER | DLGBOX_RBUF_FILLED;
+    controls =
+    {
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Layer";
+            info = CHLIST{};  /* Choice list created dynamically */
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            prompt = "Centre"<WS_SYMBOL_ELLIPSIS>;
+            info = TXTMESS
+            {
+                str = "-9999.999, -9999.999";
+                flags = IN_TEXTWIN_POPOUT;
+            };
+        },
+        CONTROL
+        {
+            prompt = "Radius";
+            class = C_EDWIN;
+            info = EDWIN
+            {
+                str = "";
+                flags = IN_EDWIN_VULEN_CHARACTERS;
+                maxlen = 7;
+                vulen = 4;
+            };
+        }
+    };
+}
+
+/***************************************************************************
+ **  ARC_PROP_DIALOG  Show centred Arc properties
+ **  ~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG arc_prop_dialog
+{
+    title = "x";
+    flags = DLGBOX_NOTIFY_ENTER | DLGBOX_RBUF_FILLED;
+    controls =
+    {
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Layer";
+            info = CHLIST{};  /* Choice list created dynamically */
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            prompt = "Centre"<WS_SYMBOL_ELLIPSIS>;
+            info = TXTMESS
+            {
+                str = "-9999.999, -9999.999";
+                flags = IN_TEXTWIN_POPOUT;
+            };
+        },
+        CONTROL
+        {
+            prompt = "Radius";
+            class = C_EDWIN;
+            info = EDWIN
+            {
+                str = "";
+                flags = IN_EDWIN_VULEN_CHARACTERS;
+                maxlen = 7;
+                vulen = 4;
+            };
+        },
+        CONTROL
+        {
+            class = C_FLTEDIT;
+            prompt = "Start angle";
+            info = FLTEDIT
+            {
+                low = 0.00;
+                high = 360;
+                current = 0.00;
+                vulen = 7;
+                ndec = 2;
+            };
+        },
+        CONTROL
+        {
+            class = C_FLTEDIT;
+            prompt = "Finish angle";
+            info = FLTEDIT
+            {
+                low = 0.00;
+                high = 360;
+                current = 0.00;
+                vulen = 7;
+                ndec = 2;
+            };
+        }
+    };
+}
+
+/***************************************************************************
+ **  ARC3PT_PROP_DIALOG  Show 3pt Arc properties
+ **  ~~~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG arc3pt_prop_dialog
+{
+    title = "x";
+    flags = DLGBOX_NOTIFY_ENTER | DLGBOX_RBUF_FILLED;
+    controls =
+    {
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Layer";
+            info = CHLIST{};  /* Choice list created dynamically */
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            prompt = "Start"<WS_SYMBOL_ELLIPSIS>;
+            info = TXTMESS
+            {
+                str = "999.999, 999.999";
+                flags = IN_TEXTWIN_POPOUT;
+            };
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            prompt = "Mid"<WS_SYMBOL_ELLIPSIS>;
+            info = TXTMESS
+            {
+                str = "999.999, 999.999";
+                flags = IN_TEXTWIN_POPOUT;
+            };
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            prompt = "Finish"<WS_SYMBOL_ELLIPSIS>;
+            info = TXTMESS
+            {
+                str = "-9999.999, -9999.999";
+                flags = IN_TEXTWIN_POPOUT;
+            };
+        }
+    };
+}
+
+/***************************************************************************
+ **  TEXT_PROP_DIALOG  Show Text properties
+ **  ~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG text_prop_dialog
+{
+    title = "x";
+    flags = DLGBOX_NOTIFY_ENTER | DLGBOX_RBUF_FILLED;
+    controls =
+    {
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Layer";
+            info = CHLIST {};  /* Choice list created dynamically */
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            prompt = "Position"<WS_SYMBOL_ELLIPSIS>;
+            info = TXTMESS
+            {
+                str = "-9999.999, -9999.999";
+                flags = IN_TEXTWIN_POPOUT;
+            };
+        },
+        CONTROL
+        {
+            prompt = "Text";
+            class = C_EDWIN;
+            info = EDWIN
+            {
+                str = "";
+                flags = IN_EDWIN_VULEN_CHARACTERS;
+                maxlen = 200;
+                vulen = 20;
+            };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Font";
+            info = CHLIST {};  /* Choice list created dynamically */
+        },
+        CONTROL
+        {
+            prompt = "Size";
+            class = C_EDWIN;
+            info = EDWIN
+            {
+                str = "";
+                flags = IN_EDWIN_VULEN_CHARACTERS;
+                maxlen = 7;
+                vulen = 4;
+            };
+        },
+        CONTROL
+        {
+            class = C_FLTEDIT;
+            prompt = "Angle";
+            info = FLTEDIT
+            {
+                low = 0.00;
+                high = 360;
+                current = 0.00;
+                vulen = 7;
+                ndec = 2;
+            };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Flip";
+            info = CHLIST { rid = -SYS_NO_YES; };
+        }
+    };
+}
+
+/***************************************************************************
+ **  LINK_PROP_DIALOG  Show Symbol Link properties
+ **  ~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG link_prop_dialog
+{
+    title = "x";
+    flags = DLGBOX_NOTIFY_ENTER | DLGBOX_RBUF_FILLED;
+    controls =
+    {
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Layer";
+            info = CHLIST {};  /* Choice list created dynamically */
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            prompt = "Position"<WS_SYMBOL_ELLIPSIS>;
+            info = TXTMESS
+            {
+                str = "-9999.999, -9999.999";
+                flags = IN_TEXTWIN_POPOUT;
+            };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Library";
+            info = CHLIST {};  /* Choice list created dynamically */
+            flags = DLGBOX_ITEM_DEAD;
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Symbol";
+            info = CHLIST {};  /* Choice list created dynamically */
+        },
+        CONTROL
+        {
+            class = C_FLTEDIT;
+            prompt = "Scale";
+            info = FLTEDIT
+            {
+                low = 0.001;
+                high = 100;
+                current = 1.000;
+                vulen = 7;
+                ndec = 3;
+            };
+        },
+        CONTROL
+        {
+            class = C_FLTEDIT;
+            prompt = "Angle";
+            info = FLTEDIT
+            {
+                low = 0.00;
+                high = 360;
+                current = 0.00;
+                vulen = 7;
+                ndec = 2;
+            };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Flip";
+            info = CHLIST { rid = -SYS_NO_YES; };
+        }
+    };
+}
+
+/***************************************************************************
+ **  POINT_PROP_DIALOG  Show point properties (used as a popout dialog)
+ **  ~~~~~~~~~~~~~~~~~  Also used for "Jump to" absolute dialog
+ */
+
+RESOURCE STRING sr_edit_pt_title_fmt { str = "Edit point (scale%s%s)"; }
+
+RESOURCE DIALOG point_prop_dialog
+{
+    title = "x";
+    flags = DLGBOX_NOTIFY_ENTER | DLGBOX_RBUF_FILLED;
+    controls =
+    {
+        CONTROL
+        {
+            prompt = "Loc X";
+            class = C_EDWIN;
+            info = EDWIN
+            {
+                str = "";
+                maxlen = 9;
+            };
+        },
+        CONTROL
+        {
+            prompt = "Loc Y";
+            class = C_EDWIN;
+            info = EDWIN
+            {
+                str = "";
+                maxlen = 9;
+            };
+        }
+    };
+}
+
+/* End of VecBld.rsi file */

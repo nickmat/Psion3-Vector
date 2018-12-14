@@ -1,0 +1,1756 @@
+!* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+!* Project: VECTOR FOR THE PSION 3a          *  Written by: Nick Matthews  *
+!*  Module: PSION OOP CLASS CATAGORY FILE    *  Date Started: 27 Aug 1996  *
+!*    File: VECTOR.CAT      Type: PSION CAT  *  Date Revised: 18 Jan 1997  *
+!* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+!   Copyright (c) 1996, 1997, Nick Matthews
+
+IMAGE vector
+
+EXTERNAL olib
+EXTERNAL hwim
+
+INCLUDE epoc.h
+INCLUDE p_serial.h
+INCLUDE hwimman.g
+INCLUDE mfne.g
+INCLUDE factive.g
+INCLUDE vecfile.h
+
+
+!***************************************************************************
+!*  vecws  Window server active object.
+!*  ~~~~~
+
+CLASS   vecws   wserv
+{
+    REPLACE ws_dyn_init
+    CONSTANTS
+    {
+        VERSION "P1.20.b5"
+        VERSION_SET 104     ! Vec file version (minver) (P1.20.b4)
+        VERSION_CFG   6     ! Config file version       (P1.20.b4a)
+        VERSION_XCH   6     ! Import/Export libray      (P1.20.b5)
+    }
+}
+
+!***************************************************************************
+!*  vecdw  Vector Drawing Window.
+!*  ~~~~~
+
+CLASS   vecdw   win
+{
+    REPLACE wn_init
+    REPLACE wn_draw
+    REPLACE wn_key
+    ADD wn_beg_draw
+    ADD wn_beg_draw_clear
+    ADD wn_end_draw
+    ADD dw_set_size
+    ADD dw_get_size
+    ADD dw_get_srect        ! Get screen rectangle
+    ADD dw_set_cursor       ! Set the cursor type
+    ADD dw_clear_bitmaps
+    ADD dw_clear_grey       ! Clear the grey bitmap only
+    ADD dw_set_text         ! Set TextOn TRUE or FALSE
+    ADD dw_set_disable      ! Set Disable TRUE or FALSE
+    PROPERTY
+    {
+        INT CurOn;
+        INT GridOn;
+        INT SnapOn;
+        INT DrawCount;
+        INT TextOn;     ! Drawing will accept printable char if TRUE
+        INT Disable;    ! Disable screen updating
+    }
+}
+
+!***************************************************************************
+!*  veciw  Information Window.
+!*  ~~~~~
+
+CLASS   veciw   bwin
+{
+    REPLACE wn_init
+    REPLACE wn_draw
+    ADD iw_set_pos
+    ADD iw_update      ! Update one of the info items (IW_???)
+    CONSTANTS
+    {
+        IW_COMMAND    0
+        IW_STEP       1
+        IW_LOC_A      2
+        IW_LOC_L      3
+        IW_LOC_R      4
+        IW_LOC_P      5
+        IW_SNAP       6
+        IW_GRID       7
+        IW_LAYER_CUR  8
+        IW_LAYER_ON   9
+        IW_TEXT      10
+        IW_REG_TO    11
+        IW_REG_NAME  12
+        ! Compound rects
+        IW_MODE      13   ! COMMAND and STEP
+        IW_LOC       14   ! LOC_*
+        IW_LAYER     15   ! LAYER_CUR and LAYER_ON
+        IW_ALL       16
+    }
+}
+
+!***************************************************************************
+!*  vecsw  Scroll Windows.
+!*  ~~~~~
+
+CLASS   vecsw    bwin
+{
+    DEFER sw_set_pos
+    PROPERTY
+    {
+        WORD Len;
+    }
+}
+
+CLASS   vecvsw   vecsw
+{
+    REPLACE wn_init
+    REPLACE wn_draw
+    REPLACE sw_set_pos
+}
+
+CLASS   vechsw   vecsw
+{
+    REPLACE wn_init
+    REPLACE wn_draw
+    REPLACE sw_set_pos
+}
+
+!***************************************************************************
+!*  veccm  Command manager.
+!*  ~~~~~
+
+CLASS veccm comman
+{
+    REPLACE com_statwin
+    REPLACE com_mode_change
+    REPLACE com_file_change
+    REPLACE com_menu          ! Disable Symbol/Font edit option
+    REPLACE com_accl_check    ! Disable Symbol/Font edit option
+    ! Start of main menu
+    REPLACE com_exit
+    ADD com_exit_lose
+    ADD com_about
+    ADD com_edit_symbol
+    ! Start of key map
+    ADD com_new_file
+    ADD com_open_file
+    ADD com_save_as
+    ADD com_save
+    ADD com_revert
+    ADD com_undo
+    ADD com_redo
+    ADD com_erase
+    ADD com_group
+    ADD com_ungroup
+    ADD com_move
+    ADD com_copy
+    ADD com_scale
+    ADD com_stretch
+    ADD com_rotate
+    ADD com_mirror
+    ADD com_break
+    ADD com_property
+    ADD com_line
+    ADD com_polyline
+    ADD com_arc_centre
+    ADD com_quadrant
+    ADD com_arc_3pt
+    ADD com_text
+    ADD com_box
+    ADD com_polygon
+    ADD com_circle
+    ADD com_symbol
+    ADD com_dim
+    ADD com_first
+    ADD com_second
+    ADD com_third
+    ADD com_fourth
+    ADD com_set_list
+    ADD com_snap
+    ADD com_layers
+    ADD com_set_text
+    ADD com_view
+    ADD com_set_pref
+    ADD com_set_print
+    ADD com_print
+    ADD com_jump
+    ADD com_zoom_to
+    ADD com_zoom_in
+    ADD com_zoom_out
+    ! Zoom sub menu
+    ADD com_zoom_box
+    ADD com_zoom_extent
+    ADD com_zoom_actual
+    ADD com_zoom_width
+    ADD com_zoom_height
+    ADD com_zoom_factor
+    ! Dimensions sub menu
+    ADD com_dim_horiz = veccm_com_not_yet
+    ADD com_dim_vert = veccm_com_not_yet
+    ADD com_dim_align = veccm_com_not_yet
+    ADD com_dim_angle = veccm_com_not_yet
+    ADD com_dim_radius = veccm_com_not_yet
+    ADD com_dim_dia = veccm_com_not_yet
+    ! Jump sub menu
+    ADD com_jmp_abs
+    ADD com_jmp_cur_cart
+    ADD com_jmp_cur_polar
+    ADD com_jmp_last_cart
+    ADD com_jmp_last_polar
+    ADD com_jmp_end
+    ADD com_jmp_mid
+    ADD com_jmp_intersect
+    ADD com_jmp_centre
+    ADD com_jmp_quad
+    ADD com_jmp_perp
+    ADD com_jmp_tangent
+    ! Preference sub menu
+    ADD com_set_cursor
+    ADD com_select_box
+    ADD com_movement
+    ADD com_keyboard
+    ADD com_units
+    ADD com_page
+    ADD com_origin
+    ADD com_move_copy
+    ADD com_jump_box
+    ADD com_active_undo
+    ADD com_set_zoom
+    ! Edit Symbol sub menu
+    ADD com_create_sym
+    ADD com_ungroup_sym
+    ADD com_list_sym
+    ! Edit Font sub menu
+    ADD com_create_char
+    ADD com_create_space
+    ADD com_ungroup_char
+    ! Non menu commands (for keyboard map) */
+    ADD com_tog_snap
+    ADD com_tog_b_grid
+    ADD com_tog_g_grid
+    ADD com_tog_info
+    ADD com_tog_quick
+    ADD com_not_alloc
+    ! Temp
+    ADD com_not_yet
+    CONSTANTS
+    {
+        MENUBOP_EDIT       1  ! Menu bar Edit option
+        MENUOP_SYMBOL_EDIT 5  ! Edit menu - Symbol/Font edit option
+        KEY_MAP_FIRST      O_COM_NEW_FILE
+    }
+}
+
+!***************************************************************************
+!*  ddata  Main data store. Note, we only ADD methods so we can make drastic
+!*  ~~~~~  changes to the storage method without affecting too much code.
+
+CLASS ddata sgbuf
+{
+    ADD dd_reset               ! Clear all data
+    ADD dd_rewind              ! Reset the current record to 1st rec
+    ADD dd_set_pos             ! Set the current record
+    ADD dd_add                 ! Add a record to end.
+    ADD dd_add_1st             ! Add a record to the beginning
+    ADD dd_insert              ! Insert a record at given pos
+    ADD dd_replace             ! Replace the record at given pos
+    ADD dd_safe_replace        ! Does not lose prev record if no memory
+    ADD dd_delete              ! Delete a record at given pos
+    ADD dd_read                ! Read a record at given pos
+    ADD dd_next                ! Read the next record
+    ADD dd_count               ! Return the number of records
+    ADD dd_pos                 ! Return current position
+    TYPES
+    {
+        typedef short int SUNIT;  /* Screen unit */
+        typedef struct
+        {
+            SUNIT x;
+            SUNIT y;
+        } S_PT;
+        typedef struct
+        {
+            S_PT pos;
+            S_PT lim;
+        } SRECT;
+        typedef struct
+        {
+            VOID* pfcb;     ! Pointer to file control block, NULL if not open
+            UWORD data;     ! File offset to data store
+            UWORD chlist;   ! File offset to character table
+            TEXT fname[LNAME_MAX_Z]; ! File name without path or ext
+            !ATTR* fattr;    ! Copy of file attribute table
+        } FONT;
+        typedef struct
+        {
+            VOID* pfcb;     ! Pointer to file control block, NULL if not open
+            UWORD data;     ! File offset to data store
+            UWORD symlist;  ! File offset to symbol table
+            TEXT fname[LNAME_MAX_Z]; ! File name without path or ext
+            INT symcount;   ! Number of symbols in library
+            SYMSET set;     ! Default settings for new symbol links
+            !ATTR* fattr;    ! Copy of file attribute table
+        } LIB;
+        typedef TE_TSTYLE TSTYLE;
+        typedef UWORD TBENT_SYM;
+    }
+    CONSTANTS
+    {
+        ! Structure offsets
+        SIZE_BYTE      0
+        TYPE_BYTE      1
+        BODY_BYTE      2
+        ATTR_BYTE      2
+        COUNT_BYTE     2
+        FLAG_BYTE      3
+        LAYER_BYTE     3
+        DATA_BYTE      4
+        LAYER_NAME_MAX 32
+        FONT_HEIGHT    2500
+        FONT_DESCEND   1000
+        ! Maths contants
+        TRIG45         11585 ! acos and asin of 45 deg
+        ! Type flags
+        V_AGGR_BIT  32  ! Aggregate bit (for testing aggregate elements)
+        ! Rubber band layer mask
+        BAND_LAYER     0x80       ! Element marked as selected
+        NEW_LAYER      0x40       ! A new element not yet in store
+        PREV_LAYER     0x20       ! Previously selected element
+        LAYER_FLAGS    0xf0       ! For cleaning off layer flags
+        ! End Of Data
+        EL_EOD   0xffff
+        ! The size of an Element buffer.
+        ! Dictates the maximum size of an element
+        EL_BUFSIZE  256
+        ! We don't want to get tied to a SGBUF class
+        O_DD_INIT   O_SB_INIT
+        O_DD_SIZE   O_SB_COUNT
+    }
+    PROPERTY
+    {
+        UINT pos;
+        UINT rcount;
+    }
+}
+
+!***************************************************************************
+!*  drgfile  A class to represent a vector drawing file
+!*  ~~~~~~~
+
+CLASS drgfile root
+{
+    ADD df_init
+    ADD df_set_fname
+    ADD df_get_fname       ! Get full file name and path
+    ADD df_get_name        ! Get short file name (name + ext)
+    ADD df_save_file
+    ADD df_kill
+    ADD df_check_header
+    ADD df_read_file
+    TYPES
+    {
+        typedef struct
+        {
+            TEXT  fname[P_FNAMESIZE];
+            UWORD format;
+        } VECFBUF;
+        typedef struct
+        {
+            TEXT  sig[ SignatureSize ];
+            UWORD version;
+            UWORD hdrsize;
+            UWORD minver;
+        } DRGHDR;
+    }
+    PROPERTY
+    {
+        TEXT   fname[P_FNAMESIZE];
+        VOID*  pcb;
+        TEXT*  name; ! Pointer to short file name
+        DRGHDR hdr;  ! The correct header for new files
+        INT    ver;  ! Current file version
+        INT    set;  ! Current file settings
+    }
+}
+
+!***************************************************************************
+!*  undo  A class to represent an undo data file. Note, the names Delete and
+!*  ~~~~  Insert etc. describe the action required when Undo is invoked.
+!*  A pair of instances is created, as Undo and Redo.
+
+CLASS undo root
+{
+    ADD ud_init         ! Initiate as either Undo or Redo
+    ADD ud_set_msg      ! Set a message to be save with the next entry
+    ADD ud_save         ! Create an undo with a word of data
+    ADD ud_save_delete  ! Create a delete undo with hand
+    ADD ud_save_insert  ! Create an insert undo with hand & element
+    ADD ud_save_replace ! Create a replace undo with hand & element
+    ADD ud_save_move    ! Create a move undo with two elements
+    ADD ud_undo         ! Carry out an undo step
+    ADD ud_kill         ! Delete the undo file
+    ADD ud_block_beg    ! Start of a multiple entry with required message
+    ADD ud_block_end    ! Start of a multiple entry with required message
+    ADD ud_mark         ! Add mark to next undo saved
+    ADD ud_roll_back    ! Remove up to last mark or start of last block
+    TYPES
+    {
+        typedef struct
+        {
+            UWORD plen;      ! Length of the previous entry
+            UBYTE com;       ! Command
+            UBYTE flags;     ! Block marker
+            UINT  hand;      ! Store handle or misc data
+            INT   msg;       ! rid of playback message
+        } UNDOSIG;
+    }
+    CONSTANTS
+    {
+        ! Undo commands carried out when undo option is invoked
+        U_NULL       0
+        U_DELETE     1   ! Delete the element at position
+        U_INSERT     2   ! Insert data at position
+        U_REPLACE    3   ! Replace element at position with data
+        U_MOVE       4   ! Move element from one position to another
+        U_ADD_SYM    5   ! Add one to the symbol table
+        U_DEL_SYM    6   ! Delete one from the symbol table
+        U_FONT_CHAR  7   ! Update the Font Character table
+        ! sig flags
+        UNDO_BLOCK  0x01
+        UNDO_MARK   0x02
+        ! Misc
+        UNDO_NAMEMAX  9
+    }
+    PROPERTY
+    {
+        VOID* pcb;       ! File control block
+        LONG  next;      ! Position of last command
+        UWORD plen;      ! Length of the last command
+        TEXT  fn[P_FNAMESIZE];      ! Space for unique file name
+        TEXT  name[UNDO_NAMEMAX+1]; ! Object name, Undone or Redone
+        INT   block;     ! Start of a block if TRUE
+        INT   first;     ! First entry in block if TRUE
+        INT   nextmsg;   ! Message rid for next save command
+        INT   mark;      ! Mark for roll back if TRUE
+        PR_ROOT* op;     ! Objects opposite number
+        INT   HoldRedo;  ! Don't kill Redo file if set;
+    }
+}
+
+!***************************************************************************
+!*  escplotdlg  Cancel plotting dialog
+!*  ~~~~~~~~~~
+
+CLASS escplotdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+}
+
+!***************************************************************************
+!*  cusplotdlg  Custom plotting dialog
+!*  ~~~~~~~~~~
+
+!CLASS cusplotdlg dlgbox
+!{
+!    REPLACE dl_dyn_init
+!    REPLACE dl_key
+!    CONSTANTS
+!    {
+!        CUSPLOTDLG_ROTATE   1
+!        CUSPLOTDLG_OFFSETX  2
+!        CUSPLOTDLG_OFFSETY  3
+!    }
+!}
+
+!***************************************************************************
+!*  plot  Base of the printer and plotting classes, also HP-GL class
+!*  ~~~~
+!*
+
+CLASS plot root
+{
+    ADD plot_init
+    ADD plot_open
+    ADD plot_close
+    ADD plot_prefix
+    ADD plot_postfix
+    ADD plot_draw
+    ADD plot_line
+    ADD plot_circle
+    ADD plot_arc
+    ADD plot_3pt_arc
+    TYPES
+    {
+        typedef struct
+        {
+            INT   OffsetX; ! Unprinterable margin
+            INT   OffsetY; ! Unprinterable margin
+            INT   Rotate;  ! Rotate for Landscape/Portrait
+        } PLOTCUS;
+    }
+    CONSTANTS
+    {
+        ! Printer models - match PRINT_MODEL_LIST in Vector.rss
+        PLOT_PCL5    0
+        PLOT_HPGL    1
+        ! Error return values
+        PLOTERR_INIT_FAILED  -1
+    }
+    PROPERTY 1
+    {
+        PR_ESCPLOTDLG* esc; ! Escape plot
+        VOID* pcb;     ! Printer control block
+        VOID* tcb;     ! Timer control block
+        PLOTCUS set;   ! custom plotting settings
+        INT   cancel;  ! Printing has been canceled if TRUE
+        INT   downat;  ! Pen down if TRUE
+        LA_PT last;    ! Point where pen is down
+    }
+}
+
+!***************************************************************************
+!*  pcl5plt  HP-PCL 5 printer (via HP-GL) class
+!*  ~~~~~~~
+!*
+
+CLASS pcl5plt plot
+{
+    REPLACE plot_init
+    REPLACE plot_prefix
+    REPLACE plot_postfix
+}
+
+!***************************************************************************
+!*  cushpglplt  Cusom HP-GL printer
+!*  ~~~~~~~~~~
+!*
+
+!CLASS cushpglplt plot
+!{
+!    REPLACE plot_init
+!}
+
+!***************************************************************************
+!*  cuspcl5plt  Cusom HP-PCL 5 printer
+!*  ~~~~~~~~~~
+!*
+
+!CLASS cuspcl5plt pcl5plt
+!{
+!    REPLACE plot_init = cushpglplt_plot_init
+!}
+
+!***************************************************************************
+!*  vec  Base of the main drawing class. Holds all the global variables that
+!*  ~~~  describe the current drawing. All the property of this class is
+!* saved with the drawing data.
+
+CLASS vec root
+{
+    ADD dg_move_cursor     ! Set point to be on Page & move Scrn to show cur
+    ADD dg_move_screen     ! Adjust screen and move cursor so its in view
+    ADD dg_snap_to_grid    ! Snap Cur to the nearest grid point
+    ADD dg_set_zoom        ! Set & redraw the display for given upp
+    TYPES
+    {
+        typedef struct
+        {
+            UWORD space;
+            UBYTE flags;
+            UBYTE minor;
+            UBYTE major;
+            UBYTE showlist;
+        } GRIDSET;
+        typedef struct
+        {
+            S_PT  first;   ! Screen coord of 1st dot
+            A_PT  gap;     ! Gap (remainder) for 1st dot
+            INT   upp;     ! Units per Pixel
+            INT   pps;     ! Pixels per Space
+            INT   gps;     ! Gap (remainder) per Space
+            INT   maj;     ! Number of spaces between major columns
+            INT   col1st;  ! Number of columns past prev major
+            SUNIT maj1st;  ! Screen coord of 1st major row
+            INT   majgapy; ! Gap (remainder) for 1st major row
+            INT   majpps;  ! Pixels per major space
+            INT   majgps;  ! Gap (remainder) per major space
+        } GRID_DATA;
+        typedef struct
+        {
+            WORD mul;  ! Multiplier
+            WORD div;  ! Divider
+        } DSCALE;
+        typedef struct
+        {
+            UBYTE  spare;
+            UBYTE  papermul;
+            UBYTE  size;
+            UBYTE  orient;
+        } PAGESET;
+        typedef struct
+        {
+            TEXT    unitname[UNIT_NAME_MAX_Z];
+            GRIDSET grid;
+            DSCALE  scale;
+            PAGESET page;
+        } SET_PREF;
+    }
+    CONSTANTS
+    {
+        ! View windows flags. Do NOT change without checking viewdlg.
+        VW_OFF       0x00
+        VW_HSCROLL   0x01
+        VW_VSCROLL   0x02
+        VW_SCROLL    0x03 ! ( VW_HSCROLL | VW_VSCROLL )
+        VW_HRULER    0x04
+        VW_VRULER    0x08
+        VW_RULER     0x0c ! ( VW_HRULER | VW_VRULER )
+        VW_SSTATUS   0x10
+        VW_LSTATUS   0x20
+        VW_STATUS    0x30 ! ( VW_LSTATUS | VW_SSTATUS )
+        VW_INFO      0x40
+        VW_CMD       0x80
+        ! Diamond List item flags
+        VDL_FIRST    0x01
+        VDL_SECOND   0x02
+        VDL_THIRD    0x04
+        VDL_FOURTH   0x08
+        VDL_MAX      4
+        ! Displayed Units
+        UNITS_CM     0
+        UNITS_MM     1
+        UNITS_INCH   2
+        UNITS_PT     3
+        ! Y axis direction (vec.yDir)
+        Y_AXIS_DOWN  0
+        Y_AXIS_UP    1
+        ! Display page & margins
+        PGDISP_PAGE    0x01
+        PGDISP_MARG    0x02
+        ! Grid setting flags
+        GRID_SNAP      0x01
+        GRID_GREY      0x02
+        GRID_BLACK     0x04
+        GRID_DISP      0x06
+        GRID_MINOR     0x0f
+        GRID_MAJOR     0xf0
+        ! Movement key actions
+        MOVE_ACT_BALLISTIC  0
+        MOVE_ACT_SLOW_CUR   1
+        MOVE_ACT_FAST_CUR   2
+        MOVE_ACT_SLOW_WIN   3
+        MOVE_ACT_FAST_WIN   4
+        ! Command action to Copy (not Move) flags
+        COM_ACT_SCALE    0x01
+        COM_ACT_STRETCH  0x02
+        COM_ACT_ROTATE   0x04
+        COM_ACT_MIRROR   0x08
+        COM_ACT_COPY     0x80
+        ! Misc sizes
+        KEY_MAP_SIZE       36
+        UNIT_NAME_MAX       5
+        UNIT_NAME_MAX_Z     6
+    }
+    PROPERTY
+    {
+        ! Only property that is saved with the file is held here
+        UWORD DataOffset;    ! File offset to data (for file use only)
+        UWORD TableCount;    ! Number of tables (for file use only)
+        ARECT Page;          ! Page rectangle
+        ARECT Scrn;          ! Screen rectangle
+        A_PT  Cur;           ! Cursor position
+        UBYTE yDir;          ! Display Y direction positive. 0=y down, 1=y up
+        UBYTE spare1;
+        UWORD DispDp;        ! Display number of Decimal digits
+        UWORD spare2;
+        UBYTE Units;         ! UNITS_CM UNITS_INCH UNITS_MM
+        UBYTE Attr;          ! Current Attribute, Index into AttrList
+        UWORD LayMask;       ! Layer mask. Bit=1 for Layer On
+        UBYTE Layer;         ! Current drawing layer
+        UBYTE ZoomPercent;   ! Current percentage change on Zoom In/Out
+        UBYTE View;          ! Current windows on view, see VW_* flags
+        UBYTE DiamondList;   ! Flags for Diamond List
+        UBYTE DiamondView;   ! The current view on drawing
+        UBYTE Text;          ! Current text style, index into TextList
+        ARECT DListScrn[VDL_MAX];   ! Screen rectangle for diamond view
+        A_PT  DListCur[VDL_MAX];    ! Cursor position for diamond view
+        SWORD DListUpp[VDL_MAX];    ! Screen upp for Diamond view
+        UWORD DListMask[VDL_MAX];   ! Layer mask for diamond view
+        UBYTE DListLay[VDL_MAX];    ! Active layer for diamond view
+        A_PT  Orig;      ! Origin for units and grid
+        SWORD upp;       ! Absolute units per pixel
+        UBYTE LastChar;  ! Last character created (Font file only)
+        UBYTE MoveCopy;  ! Set commands to move or copy, see COM_ACT_???
+        UBYTE UndoOff;   ! Undo is inactive if TRUE
+        UBYTE PgDisp;    ! Display page and margin flags (PGDISP_*)
+        SET_PREF Pref;   ! User preferences
+        ARECT Marg;      ! Margin rectangle
+        UBYTE NewText;   ! The number used when creating a new text style
+        UBYTE OffGrid;   ! The current cursor pos is ignoring the grid setting
+        AUNIT Nearest;   ! Size of "Jump to nearest" square
+        UWORD CurLib;    ! Index of current library
+        INT   CurSym;    ! Index of current symbol
+        UWORD SelectBox; ! Cursor selection box size
+        UWORD NewSym;    ! Sequence number for next symbol (Library only)
+    }
+}
+
+!***************************************************************************
+!*  drg  The main drawing engine.
+!*  ~~~
+
+CLASS drg vec
+{
+    ADD dg_init
+    ADD dg_update_cfg     ! Update section and save the configuration file
+    ADD dg_read_file
+    ADD dg_reset_data_    ! Reset data and either DG_CLEAR_SETTINGS or DG_LEAVE_SETTINGS
+    ADD dg_next_marked    ! Get handle of next marked element
+    ADD dg_next_inrect    ! Get handle of next element partly in rect
+    ADD dg_next_enclosed  ! Get handle of next element fully in rect
+    ADD dg_next_pt_inrect ! Get handle of next element with a pt in rect
+    ADD dg_mark_el        ! Mark and display element as selected
+    ADD dg_make_sym_tab   ! Create or refresh a symbol table
+    ADD dg_make_char_tab  ! Create or refresh a font character table
+    ADD dg_update_bound   ! Update the bounding rect to enclose element
+    ADD dg_process_el     ! Update element with current processing
+    ADD dg_clear_bitmap   ! Clear both Black and Grey bitmaps
+    ADD dg_draw_el
+    ADD dg_undraw_el
+    ADD dg_draw_all
+    ADD dg_draw_grey
+    ADD dg_redraw         ! Clear screen and draw all elements
+    ADD dg_get_layer_str  ! Copy the name for given layer to buffer
+    ADD dg_set_view       ! Set up the view windows
+    ADD dg_update_page    ! Update the page, margin and check/adjust other values
+    ADD dg_set_page       ! Set up a new page size
+    ADD dg_set_snap_grid  ! Set up the given snap and grid settings
+    ADD dg_set_dlist      ! Set up the diamond list
+    ADD dg_change_view
+    ADD dg_get_extent     ! Get boundry of current drawing
+    ADD dg_zoom_to_box    ! Zoom screen to fit given rect
+    ADD dg_get_font       ! Get font index from name, create one if necessary
+    ADD dg_get_lib        ! Get lib index from name, create one if necessary
+    ADD dg_open_lib       ! Open file associated with the given LIB struct
+    ADD dg_set_fname      ! Set FileType from DatUsedPathNamePtr
+    ADD dg_alert          ! Put up a safe error alert
+    ADD dg_cancel_retry   ! Put up a safe error alert
+    ! Misc methods that can be called from DYLs
+    ADD dg_hypot          ! UINT kcHypotenuse( INT side1, INT side2 );
+    ADD dg_sq_root        ! Call kcSquareRoot
+    ADD dg_su2au          ! Temp? bug in DYL stops macro working
+    ADD dg_adjust_scrn    ! Set screen and clip values to given position
+    ADD dg_test_upp       ! Test (and adjust) that upp is in range
+    ADD dg_calc_intersect ! Calc intersect point of two lines
+    ADD dg_calc_arc_cntr  ! Call CalcArcCentreAPt
+    ADD dg_calc_perp      ! Call CalcPerpendicularPt
+    ADD dg_break_circle   ! Calc break of circle into two arcs
+    ADD dg_larc_to_3pt    ! Convert a large arc to a 3pt arc
+    ADD dg_3pt_to_larc    ! Convert a 3pt arc to a large arc
+    ADD dg_get_fbuf       ! Return the address of FBuf
+    ADD dg_normalise_rect ! Normalise a ARECT (.lim >= .pos)
+    ADD dg_get_grey_bmid  ! Get grey bitmap id
+    ADD dg_get_black_bmid ! Get black bitmap id
+    ADD dg_get_bmhand     ! Get BITMAP_BLACK or BITMAP_GREY bitmap handle
+    ADD dg_swap_bitmap    ! Swap the black and grey bitmap handles over
+    ADD dg_get_pic_head   ! Get a pointer to the default pic file header
+    ADD dg_average        ! Get the average of two AUNITs
+    ADD dg_long_div_uint  ! Return (AUNIT) ( *long / uint )
+    ADD dg_l_div_l_eq_l   ! *long1 = *long2 / *long3;
+    ADD dg_centre_edge    ! Return ( width * upp - dx ) / 2;
+    ADD dg_create_band    ! Create a new band of given class
+    ADD dg_make_laylist   ! Create and fill a vastr object with layer list
+    ADD dg_make_fontlist  ! Create and fill a vastr object with font list
+    ADD dg_make_liblist   ! Create and fill a vastr object with lib list
+    ADD dg_make_symlist   ! Create and fill a vastr object with symbol list
+    ADD dg_get_sym_index  ! Get the library index from the symbol ref
+    ADD dg_get_sym_ref    ! Get the symbol ref from the library index
+    ADD dg_get_textht_str ! Call GetTextHtStr using LKSET data
+    ADD dg_set_textht     ! Set LKSET values by calling SetTextHt
+    ADD dg_get_angle_dbl  ! Call GetAngleDbl
+    ADD dg_set_angle      ! Call SetAngle
+    ADD dg_calc_angle     ! Call CalcAngle
+    ADD dg_adjust_lkdim   ! Adjust dimension using supplied lkset
+    ADD dg_adjust_lkang   ! Adjust angle using supplied lkset
+    ADD dg_adjust_lkpt    ! Adjust point using supplied lkset
+    ADD dg_new_class      ! Create a new class
+    ADD dg_get_scale_dbl  ! Call GetScaleDbl
+    ADD dg_set_scale      ! Call SetScale
+    ADD dg_adjust_lkel    ! Call AdjustFileEl
+    ADD dg_set_text_rect  ! Call SetTextRect
+    ADD dg_angle_in_arc   ! Return TRUE if the angle is in the 2 ang array
+    ADD dg_get_polar_pt   ! Call GetPolarPt
+    ADD dg_rel_polar_pt   ! Call GetRelPolarPt
+    ADD dg_rect_overlap   ! Call RectOverlap
+    ADD dg_is_layer_on    ! Call IsLayerOn
+    ADD dg_dlg_title_s    ! Call SetTitleScaleUnits
+    ADD dg_dlg_set_s_au   ! Call DlgSetScaleAunit
+    ADD dg_dlg_get_s_au   ! Call DlgSenseScaleAunit
+    ADD dg_dlg_set_s_lau  ! Call DlgSetScaleLaunit
+    ADD dg_dlg_get_s_lau  ! Call DlgSenseScaleLaunit
+    ADD dg_dlg_set_s_rpt  ! Call DlgSetScaleRpt
+    ADD dg_lau_to_s_text  ! Call LaunitToScaleText (with pointer to LAUNIT)
+    ADD dg_s_text_to_au   ! Call ScaleTextToAunit
+    ADD dg_rpt_to_s_text  ! Call RptToScaleText
+    ADD dg_update_scale   ! Call UpdateDispScale
+    ADD dg_snap_cursor    ! Call AdjustCur( &Drg->vec.Cur, &Drg->vec.Cur )
+    ! Debug
+    ADD dg_debug          ! Put up a debug message with up to 3 numbers
+    TYPES
+    {
+        typedef struct
+        {
+            UBYTE keys;
+            UBYTE shift;
+            UBYTE ctrl;
+            UBYTE sh_ctrl;
+            UBYTE fast;
+            UBYTE slow;
+        } MOVESET;
+        typedef struct
+        {
+            UWORD size;     ! Size code
+            UBYTE color;    ! 0=Black, 1=Grey
+            UBYTE width;    ! Width code
+            UWORD selbox;   ! Selection box code
+        } CURTYPE;
+        typedef struct
+        {
+            UBYTE name;
+            UBYTE device;
+            P_SRCHAR serport;
+            TEXT  fname[P_FNAMESIZE];
+        } PRN;
+        typedef struct
+        {
+            UBYTE   keys[KEY_MAP_SIZE];
+            MOVESET move;
+            CURTYPE cursor;
+            PRN     prn;
+        } CONFIG;
+        typedef struct
+        {
+            HANDLE bitmap;
+            INT    mode;
+            INT    width;
+            VOID*  dash;
+        } DATTR;
+    }
+    CONSTANTS
+    {
+        ! DAttr.mode values
+        DRAW_MODE_SET  0
+        DRAW_MODE_CLR  1
+        DRAW_MODE_INV  2
+        DRAW_MODE_TST  3
+        ! Band Layer operation
+        BL_OFF     0
+        BL_BLACK   1
+        BL_GREY    2
+        ! Process operations
+        PO_NONE    0
+        PO_MOVE    1
+        PO_ROTATE  2
+        PO_SCALE   3
+        PO_MIRROR  4
+        PO_STRETCH 5
+        PO_PLOT    16
+        ! Reset Data flag
+        DG_LEAVE_SETTINGS  0
+        DG_CLEAR_SETTINGS  1
+        ! Action flags
+        ACTION_DRAW    0x01
+        ACTION_STORE   0x02
+        ! File type list (Matches FILE_TYPE_LIST)
+        FTYPE_DRAWING    0
+        FTYPE_TEMPLATE   1
+        FTYPE_LIBRARY    2
+        FTYPE_FONT       3
+        ! Return values for dg_discard_retry
+        ALERT_CANCEL   0
+        ALERT_RETRY    1
+        ! Bitmap types
+        BITMAP_BLACK   0
+        BITMAP_GREY    1
+        ! Configuration file sections
+        CFG_KEYS    0
+        CFG_MOVE    1
+        CFG_CURSOR  2
+        CFG_PRN     3
+        ! Cursor size, width & selection box codes
+        CURSIZE_SMALL  0
+        CURSIZE_MEDIUM 1
+        CURSIZE_LARGE  2
+        CURSIZE_FULL   3
+        CURCOLOR_BLACK 0
+        CURCOLOR_GREY  1
+        CURWIDTH_THIN  0
+        CURWIDTH_THICK 1
+        CURSELBOX_OFF  0
+        CURSELBOX_ON   1
+        ! Printer Name list
+        PRNNAME_PCL5      0
+        PRNNAME_HPGL      1
+        ! Devices list
+        PRNDEV_PARA       0
+        PRNDEV_SERIAL     1
+        PRNDEV_FILE       2
+        PRNDEV_IRLINK     3
+        ! Quick draw flags
+        QUICK_TOGGLE   0x00ff
+        QUICK_UPDATE   0x0100
+        ! Primative functions
+        PRIM_DRAW         0
+        PRIM_ISINRECT     1
+        PRIM_PLOT         2
+    }
+    PROPERTY
+    {
+        PR_DRGFILE* DrgFile;
+        PR_VECDW* DWin;           ! Drawing window (Always exists)
+        !PR_VECCW* CWin;           ! Command window
+        PR_VECIW* IWin;           ! Information window
+        PR_VECVSW* VSWin;         ! Vertical Scroll window
+        PR_VECHSW* HSWin;         ! Horizontal Scroll window
+        !PR_VECVRW* VRWin;         ! Vertical Ruler window
+        !PR_VECHRW* HRWin;         ! Horizontal Ruler window
+        PR_PLOT*   Plot;          ! Printer
+        CONFIG     Cfg;           ! Configuration file setting
+        DOUBLE     DScale;        ! Scale scale multiplier
+        DOUBLE     PScale;        ! Paper scale multiplier
+        INT        MaxDp;         ! Maximum decimal places allowed
+        INT   RegFlag;            ! TRUE if registered
+        TEXT  RegName[18];        ! Registration name or "Unregistered"
+        INT   GridDisp;           ! Display Grid if TRUE
+        INT   GridAuto;           ! Auto setting for grid (Not too close)
+        UINT  ChangedFlag;        ! Drawing changed & not saved
+        UINT  FileType;           ! One of the FTYPE_??? defines
+        UINT  CmdID;              ! Current Command rid for info
+        UINT  StepID;
+        INT   PropChanged;        ! Property has changed if TRUE (DYL static)
+        ! Current Screen values
+        SUNIT  sScrnPosX;
+        SUNIT  sScrnPosY;
+        A_PT   LastPt;            ! Last point when Enter was pressed
+        DATTR  DAttr;             ! Current element attributes
+        SRECT  Clip;              ! Default clip box (Screen size)
+        SRECT* pClip;             ! Pointer to the current clip box
+        SRECT* psInRect;          ! scrn IsInRect rectangle pointer
+        ARECT* paInRect;          ! abs IsInRect rectangle pointer
+        UINT   IsInRect;          ! Set TRUE by IsInRect function success
+        UINT   Primative;         ! Select primative function to perform (PRIM_???)
+        UINT   Quick;             ! Draw Text as box & ignore attributes
+        UINT   BandLayer;         ! Colour of Band layer elements BL_???
+        ! Attribute table   (Drg->vec.Attr holds current attribute)
+        !ATTR* AttrList;          ! Attribute table indexed by drawable elements
+        ! Text/Font tables  (Drg->vec.Text holds current text style )
+        FONT*  FontList;          ! Font table indexed by V_TEXT elements
+        INT    FontSize;          ! Size of Font table FontList
+        TSTYLE* TextList;         ! Text settings table
+        INT    TextSize;          ! Size of Text style table TextList
+        ! Varibles used to modify elements if ProcessOp set
+        INT    ProcessOp;         ! Draw with this process operation
+        AUNIT  OffsetX;           ! Translation operation offsets
+        AUNIT  OffsetY;
+        AUNIT  CentreX;           ! Rotation & scale op centre point
+        AUNIT  CentreY;
+        INT    CosQ;              ! Rotation op cos quotient
+        INT    SinQ;              ! Rotation op sin quotient
+        UINT   Divisor;           ! Rotation op sin & cos divisor
+        UINT   Scale;             ! Scale multiplier
+        UINT   Base;              ! Scale divisor
+        ARECT  StretchRect;       ! rectangle used for stretch
+        ! Symbol table (If there are no symbols, these are all zero)
+        UWORD  SymbolCount;       ! Number of entries in symbol list
+        TBENT_SYM* SymbolList;    ! Array of Symbol Element Handles
+        ! Font character table
+        UINT*  CharList;          ! Array of 256 pointers to EL_CHAR elements
+        ! Library Table
+        UWORD  LibCount;          ! Number of Library entries
+        LIB*   LibList;           ! Array of Library entries
+        ! Layer Table
+        TEXT*  LayStr[16];        ! Index Layer name strings
+        UWORD  LayBufSize;        ! Size of LayBuf
+        TEXT*  LayBuf;            ! The actual string names
+    }
+}
+
+!***************************************************************************
+!**  lklocs  Scan local drives and create a vastr list of files
+!**  ~~~~~~
+
+CLASS lklist locs
+{
+    REPLACE ls_filename     ! Add filename to list
+    ADD lkl_create_list     ! Create a file list using given extention
+    PROPERTY
+    {
+        PR_VASTR* list;
+        INT count;
+    }
+}
+
+CLASS ftopen locs
+{
+    REPLACE ls_filename  ! Attempt to open
+    ADD fto_open          ! Open the first matching file
+    PROPERTY
+    {
+        FONT* pFont;
+    }
+}
+
+CLASS lkopen locs
+{
+    REPLACE ls_filename  ! Attempt to open
+    ADD lko_open          ! Open the first matching file
+    PROPERTY
+    {
+        LIB* pLib;
+    }
+}
+
+CLASS tpopen locs
+{
+    REPLACE ls_filename  ! Attempt to open
+    ADD tpo_open         ! Open the first matching file
+    PROPERTY
+    {
+        INT success;     ! TRUE if succesfully opened
+    }
+}
+
+! Delete all unused temporary files
+CLASS deltmp locs
+{
+    REPLACE ls_filename  ! Delete the found file
+}
+
+!***************************************************************************
+!*  band  Abstract class to represent the rubber banding used when moving
+!*  ~~~~  cursor.
+
+CLASS band root
+{
+    REPLACE destroy  ! Remove banding before destroying
+    ADD bnd_init     ! Set pel, move and safe
+    ADD bnd_on       ! Switch on (draw) band
+    ADD bnd_off      ! Switch off (remove) band
+    ADD bnd_draw     ! Draw the element pointed to by pel
+    ADD bnd_set_next ! Move the current point on for a multple point element
+    PROPERTY
+    {
+        INT On;        ! TRUE if band is being displayed
+        INT OrigHidden;! TRUE if the band if overlaying original
+        ELEM* pel;     ! Element under construction
+        A_PT* Move;    ! Where to enter moving point
+        A_PT* Ref ;    ! Initial reference point (also safe point for move)
+        A_PT  pt;      ! Scratch point for calculating element
+        A_PT  cpt;     ! Centre point for calculating element
+        INT   step;    ! for multi step builds
+    }
+}
+
+!** Rubber band consisting of circle
+CLASS bcircle band
+{
+    REPLACE bnd_draw
+    TYPES
+    {
+        typedef struct
+        {
+            EL_CIRCLE circle;
+            A_PT cpt;
+        } CIRCLE_BAND_;
+    }
+}
+
+!** Rubber band consisting of a centred arc
+CLASS barc band
+{
+    REPLACE bnd_draw
+    TYPES
+    {
+        typedef struct
+        {
+            EL_ARC arc;
+            A_PT pt;
+            A_PT cpt;
+        } ARC_BAND_;
+    }
+}
+
+!** Rubber band consisting of an arc quadrant
+CLASS bquad band
+{
+    REPLACE bnd_draw
+}
+
+!** Rubber band consisting of a horizontal dimension
+CLASS bdimh band
+{
+    REPLACE bnd_draw
+    TYPES
+    {
+        typedef struct
+        {
+            EL_DIM dim;
+            INT    step;
+            A_PT   pt;
+        } DIM_BAND_;
+    }
+    CONSTANTS
+    {
+        BDIMH_STEP_2  0
+        BDIMH_STEP_3  1
+    }
+}
+
+!** Rubber band consisting of part of the drawing
+CLASS bmove band
+{
+    REPLACE bnd_draw
+}
+
+!** Rubber band consisting of a rotating part of the drawing
+CLASS brotate band
+{
+    REPLACE bnd_draw
+}
+
+!** Rubber band consisting of a mirror image of part of the drawing
+CLASS bmirror band
+{
+    REPLACE bnd_draw
+}
+
+!** Rubber band consisting of a stretching part of the drawing
+CLASS bstretch band
+{
+    REPLACE bnd_draw
+}
+
+!** Rubber band consisting of a scaling part of the drawing
+CLASS bscale band
+{
+    REPLACE bnd_draw
+    ADD bnd_set_scale
+    PROPERTY
+    {
+        INT doscale;
+        A_PT line[2];
+    }
+}
+
+!** Rubber band to draw the break line over selected elements
+CLASS bbreak band
+{
+    REPLACE bnd_draw
+}
+
+!***************************************************************************
+!*  opendlg  Open file dialog
+!*  ~~~~~~~
+
+CLASS opendlg  dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+    TYPES
+    {
+        typedef struct
+        {
+            TEXT fname[P_FNAMESIZE];
+            UINT format;
+        } OPENDLG_DATA;
+    }
+    CONSTANTS
+    {
+        OPENDLG_NAME     1
+        OPENDLG_TYPE     3
+        ! File Format types
+        OPENDLG_VEC      0
+        OPENDLG_DXF      1
+        OPENDLG_QCD      2
+    }
+}
+
+!***************************************************************************
+!*  cnewdlg  Create New file dialog
+!*  ~~~~~~~
+
+CLASS cnewdlg  dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+    REPLACE dl_changed
+    TYPES
+    {
+        typedef struct
+        {
+            TEXT* fname;
+            TEXT  tplate[LNAME_MAX_Z];
+        } CNEWDLG_DATA;
+    }
+    CONSTANTS
+    {
+        CNEWDLG_NAME     1
+        CNEWDLG_TEMPLATE 3
+        CNEWDLG_TYPE     4
+    }
+    PROPERTY
+    {
+        PR_VASTR* tplist;
+    }
+}
+
+!***************************************************************************
+!*  savedlg  Save as file dialog
+!*  ~~~~~~~
+
+CLASS savedlg  dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+    REPLACE dl_changed
+    REPLACE dl_launch_sub
+    TYPES
+    {
+        typedef struct
+        {
+            TEXT* fname;  ! Pointer to full file path/name
+            INT   usenew; ! TRUE if the (vector only) new name is made current
+            INT   export; ! 0 or non-vector SAVE_FTYPE_??? value
+            INT   width;  ! Bitmap width
+            INT   height; ! Bitmap height
+            INT   qcdres; ! QuickCAD resolution
+        } SAVEDLG_DATA;
+    }
+    CONSTANTS
+    {
+        ! Controls
+        SAVEDLG_NAME     1
+        SAVEDLG_USENEW   3
+        SAVEDLG_TYPE     4
+        SAVEDLG_EXPORT   5
+        ! Save file type list
+        SAVE_FTYPE_VEC   0
+        SAVE_FTYPE_VTP   1
+        SAVE_FTYPE_VSL   2
+        SAVE_FTYPE_VFT   3
+        SAVE_FTYPE_INTERNAL  SAVE_FTYPE_VFT  ! Highest value of internal format
+        SAVE_FTYPE_PIC   4
+        SAVE_FTYPE_PCX   5
+        SAVE_FTYPE_DXF   6
+        SAVE_FTYPE_QCD   7
+    }
+}
+
+!***************************************************************************
+!*  bmexpdlg  Bitmap export size sub dialog (from save as dialog)
+!*  ~~~~~~~~
+
+CLASS bmexpdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+}
+
+!***************************************************************************
+!*  qcdexpdlg  QuickCAD export size sub dialog (from save as dialog)
+!*  ~~~~~~~~~
+
+CLASS qcdexpdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+}
+
+!***************************************************************************
+!*  listsymdlg  List symbols dialog, doesn't actually do anything
+!*  ~~~~~~~~~~
+
+CLASS listsymdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_changed
+}
+
+!***************************************************************************
+!*  cspacedlg  Create Font Space Character dialog
+!*  ~~~~~~~~~
+
+CLASS cspacedlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+}
+
+!***************************************************************************
+!*  setcurdlg  Set cursor type and size dialog
+!*  ~~~~~~~~~
+
+CLASS setcurdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+    CONSTANTS
+    {
+        SETCURDLG_SIZE   1
+        SETCURDLG_COLOR  2
+        SETCURDLG_WIDTH  3
+        SETCURDLG_SELBOX 4
+        SETCURDLG_SAVE   5
+    }
+}
+
+!***************************************************************************
+!*  selboxdlg  Set cursor Selection box size dialog.
+!*  ~~~~~~~~~
+
+CLASS selboxdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+}
+
+!***************************************************************************
+!*  jmpboxdlg  Set Jump to box size dialog.
+!*  ~~~~~~~~~
+
+CLASS jmpboxdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+}
+
+!***************************************************************************
+!*  setmovedlg  Set movement key function dialog
+!*  ~~~~~~~~~~
+
+CLASS setmovedlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+    CONSTANTS
+    {
+        SETMOVEDLG_CUR        1
+        SETMOVEDLG_CUR_SHIFT  2
+        SETMOVEDLG_CUR_CTRL   3
+        SETMOVEDLG_CUR_S_C    4
+        SETMOVEDLG_SLOW       5
+        SETMOVEDLG_FAST       6
+        SETMOVEDLG_SAVE       7
+    }
+}
+
+!***************************************************************************
+!*  skeydlg  Set keyboard map function dialog
+!*  ~~~~~~~
+
+CLASS skeydlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+    REPLACE dl_changed
+    CONSTANTS
+    {
+        SKEYDLG_KEY  1
+        SKEYDLG_COM  2
+        SKEYDLG_SAVE 3
+    }
+    PROPERTY
+    {
+        UBYTE keys[KEY_MAP_SIZE];
+    }
+}
+
+!***************************************************************************
+!*  setzoomdlg  Zoom settings dialog
+!*  ~~~~~~~~~~
+
+CLASS setzoomdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+}
+
+!***************************************************************************
+!*  sunitsdlg  Set units dialog. See VecUDlg.c
+!*  ~~~~~~~~~
+
+CLASS sunitsdlg dlgbox
+{
+    REPLACE dl_item_new
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+    CONSTANTS
+    {
+        SUNITSDLG_PAPER   1
+        SUNITSDLG_DRAWING 2
+        SUNITSDLG_SCALE   3
+        SUNITSDLG_DECIMAL 4
+    }
+}
+
+!***************************************************************************
+!*  dscaled  DSCALE edit field. See VecUDlg.c
+!*  ~~~~~~~
+
+CLASS dscaled  mfne
+{
+    REPLACE wn_init
+    REPLACE wn_set
+    REPLACE wn_sense
+}
+
+!***************************************************************************
+!*  spagedlg  Set page dialog
+!*  ~~~~~~~~
+
+CLASS spagedlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+    REPLACE dl_changed
+    REPLACE dl_focus
+    REPLACE dl_launch_sub
+    CONSTANTS
+    {
+        ! Margins array
+        MARGIN_LEFT      0
+        MARGIN_TOP       1
+        MARGIN_RIGHT     2
+        MARGIN_BOTTOM    3
+        ! Dialog items
+        SPAGEDLG_TITLE   0
+        SPAGEDLG_SIZE    1
+        SPAGEDLG_ORIENT  2
+        SPAGEDLG_WIDTH   3
+        SPAGEDLG_HEIGHT  4
+        SPAGEDLG_MARGIN  5
+        SPAGEDLG_DISPLAY 6
+        ! Page size list
+        SPAGEDLG_CUSTOM  0
+        SPAGEDLG_A4      1
+        SPAGEDLG_LETTER  2
+        ! Landscape/Portrait
+        SPAGEDLG_LANDSCAPE  0
+        SPAGEDLG_PORTRAIT   1
+    }
+    PROPERTY
+    {
+        AUNIT wd;
+        AUNIT ht;
+        AUNIT mg[4]; ! Margins array
+    }
+}
+
+!***************************************************************************
+!*  smargdlg  Set page margins dialog
+!*  ~~~~~~~~
+
+CLASS smargdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+    CONSTANTS
+    {
+        ! Dialog items
+        SMARGDLG_TOP    1
+        SMARGDLG_LEFT   2
+        SMARGDLG_RIGHT  3
+        SMARGDLG_BOTTOM 4
+    }
+}
+
+!***************************************************************************
+!*  sorigdlg  Set origin dialog
+!*  ~~~~~~~~
+
+CLASS sorigdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+    CONSTANTS
+    {
+        ! Dialog items
+        SORIGDLG_X      1
+        SORIGDLG_Y      2
+        SORIGDLG_Y_DIR  3
+    }
+}
+
+!***************************************************************************
+!*  showpgdlg  Show page scale details. See VecUDlg.c
+!*  ~~~~~~~~~
+
+CLASS showpgdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    CONSTANTS
+    {
+        SHOWPGDLG_WIDTH   1
+        SHOWPGDLG_HEIGHT  2
+        SHOWPGDLG_TOP     3
+        SHOWPGDLG_LEFT    4
+        SHOWPGDLG_BOTTOM  5
+        SHOWPGDLG_RIGHT   6
+    }
+}
+
+!***************************************************************************
+!*  movcpydlg  Set commands to move or copy dialog
+!*  ~~~~~~~~~
+
+CLASS movcpydlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+    CONSTANTS
+    {
+        MOVCPYDLG_SCALE   1
+        MOVCPYDLG_STRETCH 2
+        MOVCPYDLG_ROTATE  3
+        MOVCPYDLG_MIRROR  4
+    }
+}
+
+!***************************************************************************
+!*  undodlg  Set Undo active dialog
+!*  ~~~~~~~
+
+CLASS undodlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+}
+
+!***************************************************************************
+!*  sgriddlg  Snap Grid dialog
+!*  ~~~~~~~~
+
+CLASS sgriddlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+}
+
+!***************************************************************************
+!*  layerdlg  Set Layer dialog
+!*  ~~~~~~~~
+
+CLASS layerdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_set_size
+    REPLACE dl_key
+    PROPERTY
+    {
+        PR_VASTR* list;  ! The full Layer discriptions
+        UWORD current;   ! Currently selected layer
+        UWORD mask;      ! Display Mask
+        TEXT  name[16][UNAME_MAX_Z]; ! Name array
+        INT   changed;   ! TRUE if name array has changed
+    }
+}
+
+!***************************************************************************
+!*  laynamdlg  Change Layer name dialog
+!*  ~~~~~~~~~
+
+CLASS laynamdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+    TYPES
+    {
+        typedef struct
+        {
+            INT layer;
+            TEXT* name;
+        } LAYNAMDLG_DATA;
+    }
+}
+
+!***************************************************************************
+!*  stextdlg  Set text (font) dialog box.
+!*  ~~~~~~~
+
+CLASS stextdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+    TYPES
+    {
+        typedef struct
+        {
+            WORD key;     ! Key used to return from dialog
+            INT select;   ! Selected Text Style index
+            TSTYLE ts;    ! Text style data
+        } TEXTDLG_DATA;
+    }
+    PROPERTY
+    {
+        PR_VASTR* list;  ! The full text style discriptions
+        UWORD current;   ! Currently selected style
+    }
+}
+
+!***************************************************************************
+!*  atextdlg  Add text style dialog box.
+!*  ~~~~~~~~
+
+CLASS atextdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+    REPLACE dl_changed
+    CONSTANTS
+    {
+        ATEXTDLG_NAME   1
+        ATEXTDLG_FONT   2
+        ATEXTDLG_UNITS  3
+        ATEXTDLG_SIZE   4
+        ATEXTDLG_ANGLE  5
+    }
+    PROPERTY
+    {
+        PR_VASTR* list;  ! Font file list
+        UWORD current;   ! Currently selected font file
+    }
+}
+
+!***************************************************************************
+!*  ctextdlg  Change text style dialog box.
+!*  ~~~~~~~~
+
+CLASS ctextdlg atextdlg
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+}
+
+!***************************************************************************
+!*  viewdlg  Set various windows on/off dialog box.
+!*  ~~~~~~~
+
+CLASS viewdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+}
+
+!***************************************************************************
+!*  scaledit  Scale edit field
+!*  ~~~~~~~~
+
+CLASS scaledit  mfne
+{
+    REPLACE wn_init
+    REPLACE wn_set
+    REPLACE wn_sense
+}
+
+!***************************************************************************
+!*  zoommagdlg  Set zoom magnification dialog
+!*  ~~~~~~~~~~
+
+CLASS zoommagdlg  dlgbox
+{
+    REPLACE dl_item_new
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+}
+
+!***************************************************************************
+!*  dlistdlg  Select various items for diamond list in status window.
+!*  ~~~~~~~
+
+CLASS dlistdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+}
+
+!***************************************************************************
+!*  aboutdlg  Show About dialog and handle registration
+!*  ~~~~~~~~
+
+CLASS aboutdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+}
+
+!***************************************************************************
+!*  regdlg  Register dialog box
+!*  ~~~~~~
+
+CLASS regdlg dlgbox
+{
+    REPLACE dl_key
+}
+
+!***************************************************************************
+!*  about2dlg  Show About dialog and handle registration
+!*  ~~~~~~~~~
+
+CLASS about2dlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+}
+
+!***************************************************************************
+!*  sprndlg  Set printer dialog box
+!*  ~~~~~~~
+
+CLASS sprndlg dlgbox
+{
+    REPLACE dl_dyn_init
+    REPLACE dl_key
+    REPLACE dl_changed
+    REPLACE dl_launch_sub
+    CONSTANTS
+    {
+        SPRNDLG_MODEL     1
+        SPRNDLG_DEVICE    2
+        SPRNDLG_SAVE      3
+        SPRNDLG_SER_CHAR  4
+        SPRNDLG_SER_HAND  5
+        SPRNDLG_FILE      6
+    }
+}
+
+
+!DBX4!
+CLASS dbdlg dlgbox
+{
+    REPLACE dl_dyn_init
+    TYPES
+    {
+        typedef struct
+        {
+            INT rid;
+            INT code1;
+            INT code2;
+            TEXT* text;
+        } DB_DATA;
+    }
+}
+
+
+! End of VECTOR.CAT

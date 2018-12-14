@@ -1,0 +1,3192 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Project: VECTOR FOR THE PSION 3a          *  Written by: Nick Matthews  *
+ *  Module: PSION RESOURCE FILE - ENGLISH    *  Date Started: 27 Aug 1996  *
+ *    File: VECTOR.RSS      Type: PSION RSS  *  Date Revised: 30 Nov 1998  *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+    Copyright (c) 1996 - 1998, Nick Matthews
+*/
+
+#include <hwim.rh>
+#include <hwim.rg>
+#include <vector.rg>
+#include <vecsym.rg>
+#include <vecbld.rg>
+#include <symbols.h>
+#include <sa_.rsg>
+
+#include "popup.rh"
+
+RESOURCE WSERV_INFO vector_accs
+{
+    menbar_id = vector_menbar;
+    first_com = O_COM_EXIT;
+    accel =
+    {
+        'x',    /* Exit */
+        'X',    /* Exit, lose changes */
+        'V',    /* About Vector */
+        'M',    /* Edit symbol */
+        'n',    /* New file */
+        'o',    /* Open file */
+        'a',    /* Save as */
+        's',    /* Save */
+        'v',    /* Revert */
+        'u',    /* Undo */
+        'U',    /* Redo */
+        'd',    /* Delete */
+        'g',    /* Group */
+        'G',    /* Ungroup */
+        'm',    /* Move */
+        'c',    /* Duplicate */
+        'K',    /* Scale */
+        'h',    /* Stretch */
+        'f',    /* Rotate */
+        'F',    /* Mirror */
+        'b',    /* Break */
+        'P',    /* Property */
+        'l',    /* Line */
+        'i',    /* Polyline */
+        'r',    /* Arc (centre) */
+        '+',    /* Quadrant */
+        'w',    /* Arc (3 point) */ /* Curve */
+        't',    /* Text */
+        'L',    /* Box */
+        'I',    /* Polygon */
+        'R',    /* Circle */
+        'O',    /* Symbol */
+        '*',    /* Dimensions */
+        'A',    /* First View */
+        'B',    /* Second View */
+        'C',    /* Third View */
+        'D',    /* Fourth View */
+        WS_SYMBOL_DIAMOND, /* Set diamond list */
+        'S',    /* Snap & grid */
+        'J',    /* Layers */
+        'T',    /* Set text */
+        'k',    /* View */
+        'q',    /* Preferences */
+        'y',    /* Print setup */
+        'p',    /* Print */
+        'j',    /* Jump */
+        'Y',    /* Zoom to */
+        'z',    /* Zoom in */
+        'Z'     /* Zoom out */
+    };
+}
+
+RESOURCE MENU_BAR vector_menbar
+{
+    items =
+    {
+        MENU_BAR_ITEM
+        {
+            menu_id = file_menu;
+            mb_item = "File";
+        },
+        MENU_BAR_ITEM
+        {
+            menu_id = edit_menu;
+            mb_item = "Edit";
+        },
+        MENU_BAR_ITEM
+        {
+            menu_id = modify_menu;
+            mb_item = "Modify";
+        },
+        MENU_BAR_ITEM
+        {
+            menu_id = draw_menu;
+            mb_item = "Draw";
+        },
+        MENU_BAR_ITEM
+        {
+            menu_id = object_menu;
+            mb_item = "Object";
+        },
+        MENU_BAR_ITEM
+        {
+            menu_id = settings_menu;
+            mb_item = "Settings";
+        },
+        MENU_BAR_ITEM
+        {
+            menu_id=special_menu;
+            mb_item="Special";
+        },
+        MENU_BAR_ITEM
+        {
+            menu_id = diamond_menu;
+            mb_item = <WS_SYMBOL_DIAMOND>;
+        }
+    };
+}
+
+RESOURCE MENU file_menu
+{
+    items =
+    {
+        MENU_ITEM
+        {
+            com_id = O_COM_NEW_FILE;
+            mn_item = "New file";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_OPEN_FILE;
+            mn_item = "Open file";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_SAVE_AS;
+            mn_item = "Save as";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_SAVE;
+            mn_item = "Save";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_REVERT | BREAK_LINE_FOLLOWS;
+            mn_item = "Revert";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_ABOUT;
+            mn_item = "About Vector";
+        }
+    };
+}
+
+RESOURCE MENU edit_menu
+{
+    items =
+    {
+        MENU_ITEM
+        {
+            com_id = O_COM_UNDO;
+            mn_item = "Undo";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_REDO | BREAK_LINE_FOLLOWS;
+            mn_item = "Redo";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_ERASE | BREAK_LINE_FOLLOWS;
+            mn_item = "Delete";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_GROUP;
+            mn_item = "Group";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_UNGROUP;
+            mn_item = "Ungroup";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_EDIT_SYMBOL;
+            mn_item = "Edit library"; /* Longest of followong strings */
+        }
+    };
+}
+
+RESOURCE STRING sr_edit_library_mo { str = "Edit library"; }
+RESOURCE STRING sr_edit_font_mo    { str = "Edit font"; }
+
+RESOURCE MENU modify_menu
+{
+    items =
+    {
+        MENU_ITEM
+        {
+            com_id = O_COM_MOVE;
+            mn_item = "Move";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_COPY;
+            mn_item = "Duplicate";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_SCALE;
+            mn_item = "Scale";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_STRETCH;
+            mn_item = "Stretch";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_ROTATE;
+            mn_item = "Rotate";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_MIRROR;
+            mn_item = "Mirror";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_BREAK;
+            mn_item = "Break";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_PROPERTY;
+            mn_item = "Property";
+        }
+    };
+}
+
+RESOURCE MENU draw_menu
+{
+    items =
+    {
+        MENU_ITEM
+        {
+            com_id = O_COM_LINE;
+            mn_item = "Line";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_POLYLINE;
+            mn_item = "Polyline";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_ARC_CENTRE;
+            mn_item = "Arc (centre)";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_QUADRANT;
+            mn_item = "Quadrant";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_ARC_3PT;
+            mn_item = "Arc (3 point)";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_TEXT;
+            mn_item = "Text";
+        }
+    };
+}
+
+RESOURCE MENU object_menu
+{
+    items =
+    {
+        MENU_ITEM
+        {
+            com_id = O_COM_BOX;
+            mn_item = "Box";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_POLYGON;
+            mn_item = "Polygon";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_CIRCLE;
+            mn_item = "Circle";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_SYMBOL;
+            mn_item = "Symbol";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_DIM;
+            mn_item = "Dimensions";
+        }
+    };
+}
+
+RESOURCE MENU settings_menu
+{
+    items =
+    {
+        MENU_ITEM
+        {
+            com_id = O_COM_SET_PREF;
+            mn_item = "Preferences";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_SNAP;
+            mn_item = "Snap & grid";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_LAYERS;
+            mn_item = "Layers";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_SET_TEXT;
+            mn_item = "Text style";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_VIEW;
+            mn_item = "View windows";
+        }
+    };
+}
+
+RESOURCE MENU special_menu
+{
+    items =
+    {
+        MENU_ITEM
+        {
+            com_id = O_COM_JUMP | BREAK_LINE_FOLLOWS;
+            mn_item = "Jump";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_ZOOM_IN;
+            mn_item = "Zoom in";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_ZOOM_OUT;
+            mn_item = "Zoom out";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_ZOOM_TO | BREAK_LINE_FOLLOWS;
+            mn_item = "Zoom to";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_SET_PRINT;
+            mn_item = "Print setup";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_PRINT | BREAK_LINE_FOLLOWS;
+            mn_item = "Print";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_EXIT_LOSE;
+            mn_item = "Exit, lose changes";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_EXIT;
+            mn_item = "Exit";
+        }
+    };
+}
+
+RESOURCE MENU diamond_menu
+{
+    items =
+    {
+        MENU_ITEM
+        {
+            com_id = O_COM_FIRST;
+            mn_item = "First view";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_SECOND;
+            mn_item = "Second view";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_THIRD;
+            mn_item = "Third view";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_FOURTH | BREAK_LINE_FOLLOWS;
+            mn_item = "Fourth view";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_SET_LIST;
+            mn_item = "Set " <WS_SYMBOL_DIAMOND> " list";
+        }
+    };
+}
+
+/***************************************************************************
+ **  LIBRARY_SUB_MENBAR  Edit Symbol sub menu
+ **  ~~~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE MENU_BAR library_sub_menbar
+{
+    items =
+    {
+        MENU_BAR_ITEM
+        {
+            menu_id=edit_library_menu;
+            mb_item="Edit library";
+        }
+    };
+}
+
+RESOURCE WSERV_INFO library_sub_accs
+{
+    menbar_id = library_sub_menbar;
+    first_com = O_COM_CREATE_SYM;
+    accel =
+    {
+        'c',    /* Create symbol */
+        'u',    /* Ungroup & modify */
+        'l'     /* List symbols */
+      /*'a'*/   /* Add attach points */
+    };
+}
+
+RESOURCE MENU edit_library_menu
+{
+    items =
+    {
+        MENU_ITEM
+        {
+            com_id = O_COM_CREATE_SYM;
+            mn_item = "Create symbol";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_UNGROUP_SYM;
+            mn_item = "Ungroup & modify";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_LIST_SYM;
+            mn_item = "List symbols";
+        }/*,
+        MENU_ITEM
+        {
+            com_id = O_COM_SYM_ADD_ATTACH;
+            mn_item = "Add attach points";
+        }*/
+    };
+}
+
+/***************************************************************************
+ **  FONT_SUB_MENBAR  Edit Font characters sub menu
+ **  ~~~~~~~~~~~~~~~
+ */
+
+RESOURCE MENU_BAR font_sub_menbar
+{
+    items =
+    {
+        MENU_BAR_ITEM
+        {
+            menu_id=edit_font_menu;
+            mb_item="Edit font";
+        }
+    };
+}
+
+RESOURCE WSERV_INFO font_sub_accs
+{
+    menbar_id = font_sub_menbar;
+    first_com = O_COM_CREATE_CHAR;
+    accel =
+    {
+        'c',    /* Create font char */
+        's',    /* Create space */
+        'u'     /* Ungroup & modify */
+    };
+}
+
+RESOURCE MENU edit_font_menu
+{
+    items =
+    {
+        MENU_ITEM
+        {
+            com_id = O_COM_CREATE_CHAR;
+            mn_item = "Create character";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_CREATE_SPACE;
+            mn_item = "Create space character";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_UNGROUP_CHAR;
+            mn_item = "Ungroup & modify";
+        }
+    };
+}
+
+/***************************************************************************
+ **  DIM_SUB_MENBAR  Object/Dimensions sub menu
+ **  ~~~~~~~~~~~~~~
+ */
+
+RESOURCE MENU_BAR dim_sub_menbar
+{
+    items =
+    {
+        MENU_BAR_ITEM
+        {
+            menu_id = dim_menu;
+            mb_item = "Dimensions";
+        }
+    };
+}
+
+RESOURCE WSERV_INFO dim_sub_accs
+{
+    menbar_id = dim_sub_menbar;
+    first_com = O_COM_DIM_HORIZ;
+    accel =
+    {
+        'h',    /* Horizontal */
+        'v',    /* Vertical */
+        'l',    /* Aligned */
+        'a',    /* Angle */
+        'r',    /* Radius */
+        'd'     /* Diameter */
+    };
+}
+
+RESOURCE MENU dim_menu
+{
+    items =
+    {
+        MENU_ITEM
+        {
+            com_id = O_COM_DIM_HORIZ;
+            mn_item = "Horizontal";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_DIM_VERT;
+            mn_item = "Vertical";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_DIM_ALIGN;
+            mn_item = "Aligned";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_DIM_ANGLE;
+            mn_item = "Angle";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_DIM_RADIUS;
+            mn_item = "Radius";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_DIM_DIA;
+            mn_item = "Diameter";
+        }
+    };
+}
+/***************************************************************************
+ **  PREF_SUB_MENBAR  Settings/Preferences sub menu
+ **  ~~~~~~~~~~~~~~~
+ */
+
+RESOURCE MENU_BAR pref_sub_menbar
+{
+    items =
+    {
+        MENU_BAR_ITEM
+        {
+            menu_id = pref_menu;
+            mb_item = "Preferences";
+        },
+        MENU_BAR_ITEM
+        {
+            menu_id = pref_com_menu;
+            mb_item = "Commands";
+        }
+    };
+}
+
+RESOURCE WSERV_INFO pref_sub_accs
+{
+    menbar_id = pref_sub_menbar;
+    first_com = O_COM_SET_CURSOR;
+    accel =
+    {
+        'c',    /* Cursor style */
+        's',    /* Select box */
+        'm',    /* Movement */
+        'k',    /* Keyboard */
+        'u',    /* Units and scale */
+        'p',    /* Page */
+        'o',    /* Origin */
+        'v',    /* Move or copy */
+        'j',    /* Jump box */
+        'd',    /* Active undo */
+        'z'     /* Zoom step */
+    };
+}
+
+RESOURCE MENU pref_menu
+{
+    items =
+    {
+        MENU_ITEM
+        {
+            com_id = O_COM_SET_CURSOR;
+            mn_item = "Cursor style";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_SELECT_BOX;
+            mn_item = "Selection area";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_MOVEMENT;
+            mn_item = "Movement";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_KEYBOARD;
+            mn_item = "Keyboard";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_UNITS;
+            mn_item = "Units & scale";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_PAGE;
+            mn_item = "Page";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_ORIGIN;
+            mn_item = "Origin";
+        }
+    };
+}
+
+RESOURCE MENU pref_com_menu
+{
+    items =
+    {
+        MENU_ITEM
+        {
+            com_id = O_COM_MOVE_COPY;
+            mn_item = "Move or duplicate";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_JUMP_BOX;
+            mn_item = "Jump area";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_ACTIVE_UNDO;
+            mn_item = "Active undo";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_SET_ZOOM;
+            mn_item = "Zoom step";
+        }
+    };
+}
+
+/***************************************************************************
+ **  JUMP_SUB_MENBAR  Jump sub menu
+ **  ~~~~~~~~~~~~~~~
+ */
+
+RESOURCE MENU_BAR jump_sub_menbar
+{
+    items =
+    {
+        MENU_BAR_ITEM
+        {
+            menu_id = jump_to_menu;
+            mb_item = "Jump to";
+        },
+        MENU_BAR_ITEM
+        {
+            menu_id = jump_nearest_menu;
+            mb_item = "Nearest";
+        }
+    };
+}
+
+RESOURCE WSERV_INFO jump_sub_accs
+{
+    menbar_id = jump_sub_menbar;
+    first_com = O_COM_JMP_ABS;
+    accel =
+    {
+        'a',    /* Absolute */
+        'r',    /* Rel cursor x,y */
+        'o',    /* Rel cursor polar */
+        'l',    /* Rel last x,y */
+        's',    /* Rel last polar */
+
+        'e',    /* End pt */
+        'm',    /* Mid pt */
+        'i',    /* Intersect */
+        'c',    /* Centre */
+        'q',    /* Quadrant */
+        'p',    /* Perpendicular */
+        't'     /* Tangent */
+    };
+}
+
+RESOURCE MENU jump_to_menu
+{
+    items =
+    {
+        MENU_ITEM
+        {
+            com_id = O_COM_JMP_ABS;
+            mn_item = "Absolute";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_JMP_CUR_CART;
+            mn_item = "Relative to cursor (X,Y)";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_JMP_CUR_POLAR;
+            mn_item = "Relative to cursor (Polar)";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_JMP_LAST_CART;
+            mn_item = "Relative to last (X,Y)";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_JMP_LAST_POLAR;
+            mn_item = "Relative to last (Polar)";
+        }
+    };
+}
+
+RESOURCE MENU jump_nearest_menu
+{
+    items =
+    {
+        MENU_ITEM
+        {
+            com_id = O_COM_JMP_END;
+            mn_item = "End point";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_JMP_MID;
+            mn_item = "Mid point";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_JMP_INTERSECT;
+            mn_item = "Intersect";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_JMP_CENTRE;
+            mn_item = "Centre";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_JMP_QUAD;
+            mn_item = "Quadrant";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_JMP_PERP;
+            mn_item = "Perpendicular (last)";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_JMP_TANGENT;
+            mn_item = "Tangent (last)";
+        }
+    };
+}
+
+/***************************************************************************
+ **  ZOOM_SUB_MENBAR  Special/Zoom to sub menu
+ **  ~~~~~~~~~~~~~~~
+ */
+
+RESOURCE MENU_BAR zoom_sub_menbar
+{
+    items =
+    {
+        MENU_BAR_ITEM
+        {
+            menu_id=zoom_menu;
+            mb_item="Zoom to";
+        }
+    };
+}
+
+RESOURCE WSERV_INFO zoom_sub_accs
+{
+    menbar_id = zoom_sub_menbar;
+    first_com = O_COM_ZOOM_BOX;
+    accel =
+    {
+        'b',    /* Select box */
+        'e',    /* Extent */
+        'a',    /* Actual size */
+        'w',    /* Full width */
+        'h',    /* Full height */
+        's'     /* Set magnification */
+    };
+}
+
+RESOURCE MENU zoom_menu
+{
+    items =
+    {
+        MENU_ITEM
+        {
+            com_id = O_COM_ZOOM_BOX;
+            mn_item = "Select box";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_ZOOM_EXTENT;
+            mn_item = "Extent";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_ZOOM_ACTUAL;
+            mn_item = "Actual size";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_ZOOM_WIDTH;
+            mn_item = "Full width";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_ZOOM_HEIGHT;
+            mn_item = "Full height";
+        },
+        MENU_ITEM
+        {
+            com_id = O_COM_ZOOM_FACTOR;
+            mn_item = "Set magnification";
+        }
+    };
+}
+
+RESOURCE STRING sr_debug_num { str = "Debug %d"; }
+
+/* Error Strings (preloaded into memory). Order must be same as Vector.h */
+RESOURCE STRING esr_retry       { str = "Retry"; } /* This must be first */
+RESOURCE STRING esr_cancel      { str = "Cancel"; }
+RESOURCE STRING esr_discard     { str = "Discard"; }
+RESOURCE STRING esr_cant_display_sym_win
+    { str = "Can't display symbol selector"; }
+RESOURCE STRING esr_not_vec_file    { str = "Not a Vector format file"; }
+RESOURCE STRING esr_corrupt_file    { str = "Vector file format error"; }
+RESOURCE STRING esr_cant_read_file  { str = "Can't read Vector file"; }
+RESOURCE STRING esr_cant_save_file  { str = "Can't save Vector file"; }
+
+RESOURCE STRING sr_file_name_fmt    { str = "File: %s"; }
+RESOURCE STRING sr_user_abort       { str = "Cancelled by user"; }
+RESOURCE STRING sr_vdl_version_err  { str = "Incorrect VDL version"; }
+RESOURCE STRING sr_input_file_err   { str = "Input file format error"; }
+RESOURCE STRING sr_maths_err        { str = "Maths error"; }
+
+/* Misc. strings */
+RESOURCE STRING sr_file_sig       { str = "kcVectorDrawing"; }
+
+/*
+** Strings used in the Status Window
+*/
+RESOURCE STRING sr_viewing        { str = "Viewing"; }
+RESOURCE STRING sr_line           { str = "Draw Line"; }
+RESOURCE STRING sr_polyline       { str = "Draw Polyline"; }
+RESOURCE STRING sr_arc_centre     { str = "Draw Arc (cntr)"; }
+RESOURCE STRING sr_arc_3pt        { str = "Draw Arc (3 pt)"; }
+RESOURCE STRING sr_quadrant       { str = "Draw Quadrant"; }
+RESOURCE STRING sr_ellipe_arc     { str = "Elliptical Arc"; }
+RESOURCE STRING sr_curve          { str = "Draw Curve"; }
+RESOURCE STRING sr_text           { str = "Text"; }
+RESOURCE STRING sr_pos_text       { str = "Start of text"; }
+RESOURCE STRING sr_enter_text     { str = "Enter text"; }
+RESOURCE STRING sr_box            { str = "Draw Box"; }
+RESOURCE STRING sr_polygon        { str = "Draw Polygon"; }
+RESOURCE STRING sr_circle         { str = "Draw Circle"; }
+RESOURCE STRING sr_ellipse        { str = "Draw Ellipse"; }
+RESOURCE STRING sr_shape          { str = "Draw Shape"; }
+RESOURCE STRING sr_symbol         { str = "Draw Symbol"; }
+RESOURCE STRING sr_dim_horiz      { str = "Horizontal dim."; }
+RESOURCE STRING sr_dim_vert       { str = "Vertical dim."; }
+RESOURCE STRING sr_dim_align      { str = "Aligned dim."; }
+RESOURCE STRING sr_dim_angle      { str = "Angle dimension"; }
+RESOURCE STRING sr_dim_radius     { str = "Radius dimension"; }
+RESOURCE STRING sr_dim_dia        { str = "Diameter dim."; }
+RESOURCE STRING sr_dim_pos_text   { str = "Position text"; }
+RESOURCE STRING sr_erase          { str = "Delete"; }
+RESOURCE STRING sr_erase_sel      { str = "Delete selection"; }
+RESOURCE STRING sr_group          { str = "Group"; }
+RESOURCE STRING sr_group_sel      { str = "Group selection"; }
+RESOURCE STRING sr_ungroup        { str = "Ungroup"; }
+RESOURCE STRING sr_ungroup_sel    { str = "Ungroup selectn"; }
+RESOURCE STRING sr_create_sym     { str = "Create symbol"; }
+RESOURCE STRING sr_ungroup_sym    { str = "Ungroup symbol"; }
+RESOURCE STRING sr_create_font    { str = "Create font char"; }
+RESOURCE STRING sr_ungroup_char   { str = "Ungroup char"; }
+RESOURCE STRING sr_position       { str = "Position"; }
+RESOURCE STRING sr_hotspot_pt     { str = "Hot spot point"; }
+RESOURCE STRING sr_set_pitch      { str = "Set pitch"; }
+RESOURCE STRING sr_move           { str = "Move"; }
+RESOURCE STRING sr_copy           { str = "Duplicate"; }
+RESOURCE STRING sr_scale          { str = "Scale"; }
+RESOURCE STRING sr_stretch        { str = "Stretch"; }
+RESOURCE STRING sr_rotate         { str = "Rotate"; }
+RESOURCE STRING sr_mirror         { str = "Mirror"; }
+RESOURCE STRING sr_break          { str = "Break"; }
+RESOURCE STRING sr_property       { str = "Property"; }
+RESOURCE STRING sr_zoom_box       { str = "Zoom box"; }
+RESOURCE STRING sr_blank          { str = ""; }
+RESOURCE STRING sr_base_pt        { str = "Base point"; }
+RESOURCE STRING sr_1st_pt         { str = "1st point"; }
+RESOURCE STRING sr_2nd_pt         { str = "2nd point"; }
+RESOURCE STRING sr_mid_pt         { str = "Mid point"; }
+RESOURCE STRING sr_next_pt        { str = "Next point"; }
+RESOURCE STRING sr_centre_pt      { str = "Centre point"; }
+RESOURCE STRING sr_circle_pt      { str = "Circle point"; }
+RESOURCE STRING sr_arc_start      { str = "Arc start"; }
+RESOURCE STRING sr_arc_angle      { str = "Arc angle"; }
+RESOURCE STRING sr_quad_start     { str = "Quadrant start"; }
+RESOURCE STRING sr_scale_pt       { str = "Scale point"; }
+RESOURCE STRING sr_make_angle     { str = "Make angle"; }
+RESOURCE STRING sr_select         { str = "Select"; }
+RESOURCE STRING sr_sel_corner     { str = "Select corner"; }
+RESOURCE STRING sr_from_pt        { str = "From point"; }
+RESOURCE STRING sr_to_pt          { str = "To point"; }
+RESOURCE STRING sr_1st_corner     { str = "1st corner"; }
+RESOURCE STRING sr_2nd_corner     { str = "2nd corner"; }
+RESOURCE STRING sr_view_property  { str = "View property"; }
+RESOURCE STRING sr_attr           { str = "Attr:"; }
+RESOURCE STRING sr_disp_scale_fmt { str = "%d%s:%d%s"; }
+RESOURCE STRING sr_a_loc_fmt      { str = "A:"; }
+RESOURCE STRING sr_l_loc_fmt      { str = "L:"; }
+RESOURCE STRING sr_r_loc_fmt      { str = "R:"; }
+RESOURCE STRING sr_p_loc_fmt      { str = "P:"; }
+RESOURCE STRING sr_snap_fmt       { str = "S: %s"; }
+RESOURCE STRING sr_grid_fmt       { str = "G: %s"; }
+RESOURCE STRING sr_off            { str = "Off"; }
+RESOURCE STRING sr_layer_name_fmt { str = "Layer %c"; }
+RESOURCE STRING sr_registered_to  { str = "Registered to"; }
+
+RESOURCE STRING sr_mode_info_fmt  { str = "%s - %s"; }
+
+/* Status Window List */
+RESOURCE STRING sr_first          { str = "First"; }
+RESOURCE STRING sr_second         { str = "Second"; }
+RESOURCE STRING sr_third          { str = "Third"; }
+RESOURCE STRING sr_fourth         { str = "Fourth"; }
+
+/* Info/Error messages */
+RESOURCE STRING srm_outside_aa
+    { str = "Attempt to move outside drawing area"; }
+RESOURCE STRING srm_max_grp_el
+    { str = "Max number of items in group reached"; }
+RESOURCE STRING srm_no_memory        { str = "Insufficient memory"; }
+RESOURCE STRING srm_lo_mem_undo_off
+    { str = "No memory - Undo switched off"; }
+RESOURCE STRING sr_must_draw_line    { str = "Must draw line"; }
+RESOURCE STRING sr_base_not_zero     { str = "Base can not be zero"; }
+RESOURCE STRING sr_no_jump_found     { str = "No jump found"; }
+RESOURCE STRING sr_nothing_to_break  { str = "Nothing found to break"; }
+RESOURCE STRING sr_broken_count_fmt  { str = "%d Items broken"; }
+RESOURCE STRING sr_failed_break_fmt  { str = "Break failed after %d items"; }
+RESOURCE STRING sr_open_lib_fail_fmt { str = "Unable to open \"%s\" library"; }
+RESOURCE STRING sr_searching         { str = "Searching"; }
+RESOURCE STRING sr_drawing           { str = "Drawing"; }
+RESOURCE STRING sr_selection         { str = "Checking selection"; }
+RESOURCE STRING sr_saving_file       { str = "Saving %s"; }
+
+RESOURCE STRING sr_max_zoom          { str = "At maximum zoom"; }
+RESOURCE STRING sr_min_zoom          { str = "At minimum zoom"; }
+RESOURCE STRING sr_file_saved        { str = "File saved"; }
+RESOURCE STRING sr_exported_as_fmt   { str = "Exported as %s (%d)"; }
+RESOURCE STRING sr_key_not_allocated { str = "Key not allocated"; }
+RESOURCE STRING sr_not_lib_file      { str = "Must be library file"; }
+RESOURCE STRING sr_not_font_file     { str = "Must be font file"; }
+RESOURCE STRING sr_print_open_fail   { str = "Unable to open printer"; }
+
+RESOURCE STRING sr_undo              { str = "Undone"; }
+RESOURCE STRING sr_redo              { str = "Redone"; }
+/* One of the two above is put into the following strings */
+RESOURCE STRING sr_undo_default           { str = "%s"; }
+RESOURCE STRING sr_nothing_to_undo        { str = "Nothing to be %s"; }
+RESOURCE STRING sr_line_undone            { str = "Line %s"; }
+RESOURCE STRING sr_polyline_undone        { str = "Polyline %s"; }
+RESOURCE STRING sr_polygon_undone         { str = "Polygon %s"; }
+RESOURCE STRING sr_box_undone             { str = "Box %s"; }
+RESOURCE STRING sr_circle_undone          { str = "Circle %s"; }
+RESOURCE STRING sr_arc_cntr_undone        { str = "Arc (centre) %s"; }
+RESOURCE STRING sr_arc_3pt_undone         { str = "Arc (3 point) %s"; }
+RESOURCE STRING sr_quad_undone            { str = "Quadrant %s"; }
+RESOURCE STRING sr_text_undone            { str = "Text %s"; }
+RESOURCE STRING sr_dim_horiz_undone       { str = "Horizontal dim %s"; }
+RESOURCE STRING sr_dim_vert_undone        { str = "Vertical dim %s"; }
+RESOURCE STRING sr_dim_align_undone       { str = "Aligned dimension %s"; }
+RESOURCE STRING sr_dim_angle_undone       { str = "Angle dimension %s"; }
+RESOURCE STRING sr_dim_radius_undone      { str = "Radius dimension %s"; }
+RESOURCE STRING sr_dim_dia_undone         { str = "Diameter dim %s"; }
+RESOURCE STRING sr_symbol_link_undone     { str = "Symbol link %s"; }
+RESOURCE STRING sr_symbol_copy_undone     { str = "Symbol duplicate %s"; }
+RESOURCE STRING sr_move_undone            { str = "Move %s"; }
+RESOURCE STRING sr_copy_undone            { str = "Duplicate %s"; }
+RESOURCE STRING sr_scale_undone           { str = "Scale %s"; }
+RESOURCE STRING sr_stretch_undone         { str = "Stretch %s"; }
+RESOURCE STRING sr_rotate_undone          { str = "Rotate %s"; }
+RESOURCE STRING sr_mirror_undone          { str = "Mirror %s"; }
+RESOURCE STRING sr_erase_undone           { str = "Delete %s"; }
+RESOURCE STRING sr_break_undone           { str = "Break %s"; }
+RESOURCE STRING sr_modify_property_undone { str = "Modify property %s"; }
+RESOURCE STRING sr_group_undone           { str = "Group %s"; }
+RESOURCE STRING sr_ungroup_undone         { str = "Ungroup %s"; }
+RESOURCE STRING sr_create_symbol_undone   { str = "Create symbol %s"; }
+RESOURCE STRING sr_ungroup_symbol_undone  { str = "Ungroup symbol %s"; }
+RESOURCE STRING sr_create_char_undone     { str = "Create Font char %s"; }
+RESOURCE STRING sr_create_space_undone    { str = "Create Space char %s"; }
+RESOURCE STRING sr_ungroup_char_undone    { str = "Ungroup Font char %s"; }
+
+RESOURCE STRING sr_undo_not_active  { str = "Undo switched off"; }
+
+RESOURCE STRING sr_lose_all_changes { str = "Lose all changes?"; }
+RESOURCE STRING sr_print_drawing    { str = "Print current drawing?"; }
+RESOURCE STRING sr_replace_exist_char
+    { str = "Replace existing character %d?"; }
+RESOURCE STRING sr_replace_exist_sym
+    { str = "Replace existing symbol %d?"; }
+
+/* Default names */
+RESOURCE STRING sr_layer_dname_fmt  { str = "%c: Layer %c"; }
+RESOURCE STRING sr_layer_aname_fmt  { str = "%c: %s"; }
+RESOURCE STRING sr_unregistered     { str = "Unregistered"; }
+
+/***************************************************************************
+ **  ABOUT_DIALOG  About dialog
+ **  ~~~~~~~~~~~~
+ */
+
+#define CENTRE_TEXT   DLGBOX_ITEM_CENTRE | DLGBOX_ITEM_DEAD
+
+RESOURCE DIALOG about_dialog
+{
+    controls =
+    {
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            flags = CENTRE_TEXT;
+            info = TXTMESS
+            {
+                flags = IN_TEXTWIN_AL_CENTRE;
+                str = "Vector for Psion 3a/3c   from KizzyCo";
+            };
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            flags = CENTRE_TEXT;
+            info = TXTMESS
+            {
+                flags = IN_TEXTWIN_AL_CENTRE;
+                str = "Version:-  " VERSION;
+            };
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            flags = CENTRE_TEXT | DLGBOX_ITEM_UNDERLINED;
+            info = TXTMESS
+            {
+                flags = IN_TEXTWIN_AL_CENTRE;
+                str = "Copyright (c) 1997,98 Nick Matthews";
+            };
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            flags = CENTRE_TEXT;
+            info = TXTMESS
+            {
+                flags = IN_TEXTWIN_AL_CENTRE;
+                str = "";
+                /*str = "Beta copy - DO NOT DISTRUBUTE";*/
+            };
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            flags = CENTRE_TEXT;
+            info = TXTMESS
+            {
+                flags = IN_TEXTWIN_AL_CENTRE;
+                str = "Unregistered copy";
+            };
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            flags = CENTRE_TEXT | DLGBOX_ITEM_UNDERLINED;
+            info = TXTMESS
+            {
+                flags = IN_TEXTWIN_AL_CENTRE;
+                str = "";
+            };
+        },
+        CONTROL
+        {
+            class = C_ACLIST;
+            info = ACLIST { rid = about_btns; };
+        }
+    };
+}
+
+RESOURCE ACLIST_ARRAY about_btns
+{
+    button =
+    {
+        PUSH_BUT
+        {
+            keycode = W_KEY_RETURN;
+            str = "Continue";
+        },
+        PUSH_BUT
+        {
+            keycode = -' ';
+            str = "Register";
+        }
+    };
+}
+
+RESOURCE STRING sr_registered_to_fmt  { str = "Registered to %s"; }
+
+/***************************************************************************
+ **  REGISTER_DIALOG  Enter registration code dialog
+ **  ~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG register_dialog
+{
+    title = "Enter Vector registration";
+    flags = DLGBOX_NOTIFY_ENTER;
+    controls =
+    {
+        CONTROL
+        {
+            prompt = "Code";
+            class = C_EDWIN;
+            info = EDWIN
+            {
+                str = "";
+                flags = IN_EDWIN_VULEN_CHARACTERS;
+                maxlen = 40;
+                vulen = 24;
+            };
+        }
+    };
+}
+
+
+RESOURCE STRING sr_invalid_reg_code  { str = "Invalid registration code"; }
+
+/***************************************************************************
+ **  ABOUT2_DIALOG  About dialog
+ **  ~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG about2_dialog
+{
+    flags = DLGBOX_NOTIFY_ENTER;
+    controls =
+    {
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            flags = CENTRE_TEXT;
+            info = TXTMESS
+            {
+                str = "Vector for Psion 3a/3c is shareware. You may";
+            };
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            flags = CENTRE_TEXT;
+            info = TXTMESS
+            {
+                str = "try Vector for up to 30 days, after that time";
+            };
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            flags = CENTRE_TEXT;
+            info = TXTMESS
+            {
+                str = "you must register to continue to use it.";
+            };
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            flags = CENTRE_TEXT;
+            info = TXTMESS
+            {
+                str = "You can register by sending \23415 (UK Pounds only)";
+            };
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            flags = CENTRE_TEXT | DLGBOX_ITEM_UNDERLINED;
+            info = TXTMESS
+            {
+                str = "to KizzyCo or, for $30 (US Dollars) via RegNet.";
+            };
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            flags = CENTRE_TEXT;
+            info = TXTMESS
+            {
+                flags = IN_TEXTWIN_AL_CENTRE;
+                str = "Press Help for more details on registering";
+            };
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            flags = CENTRE_TEXT;
+            info = TXTMESS
+            {
+                flags = IN_TEXTWIN_AL_CENTRE;
+                str = "Press Esc to continue";
+            };
+        }
+    };
+}
+
+/***************************************************************************
+ **  CREATE_NEW_DIALOG  Create new file dialog
+ **  ~~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG create_new_dlg
+{
+    title = "Create new file";
+    flags = DLGBOX_NOTIFY_ENTER | DLGBOX_RBUF_FILLED;
+    controls =
+    {
+        CONTROL
+        {
+            prompt = "File:";
+            class = C_FNEDIT;
+            flags = DLGBOX_ITEM_NEEDS_PACK;
+            info = FNEDIT
+            {
+                flags = IN_FNEDIT_STANDARD;
+                fname = "";
+            };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Template";
+            info = CHLIST{};  /* Choice list created dynamically */
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Type";
+            flags = DLGBOX_ITEM_NOTIFY_CHANGED;
+            info = CHLIST { rid = file_type_list; };
+        }
+    };
+}
+
+/* These items should match FTYPE_?? defines */
+RESOURCE MENU file_type_list
+{
+    items =
+    {
+        CHOICE_ITEM { str = "Drawing (.vec)"; },
+        CHOICE_ITEM { str = "Template (.vtp)"; },
+        CHOICE_ITEM { str = "Library (.vsl)"; },
+        CHOICE_ITEM { str = "Font (.vft)"; }
+    };
+}
+
+RESOURCE STRING sr__default_  { str = "* None *"; }
+
+/***************************************************************************
+ **  OPEN_DIALOG  Open or import existing file dialog
+ **  ~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG open_dialog
+{
+    title = "Open file";
+    flags = DLGBOX_NOTIFY_ENTER | DLGBOX_RBUF_FILLED;
+    controls =
+    {
+        CONTROL
+        {
+            flags = DLGBOX_ITEM_NEEDS_PACK;
+            class = C_FNSELWN;
+            prompt = "File:";
+            info = FNSELWN
+            {
+                flags = IN_FNSELWN_STANDARD;
+                fname = "";
+            };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "File Type";
+            info = CHLIST { rid = open_type_list; };
+        }
+    };
+}
+
+/* These items should match OPENDLG_??? defines */
+RESOURCE MENU open_type_list
+{
+    items =
+    {
+        CHOICE_ITEM { str = "Normal"; },
+        CHOICE_ITEM { str = "AutoCAD (dxf)"; }/*,
+        CHOICE_ITEM { str = "QuickCAD (qcd)"; }*/
+    };
+}
+
+/***************************************************************************
+ **  SAVE_AS_DIALOG  File Save as dialog
+ **  ~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG save_as_dlg
+{
+    title = "Save as";
+    flags = DLGBOX_NOTIFY_ENTER | DLGBOX_RBUF_FILLED;
+    controls =
+    {
+        CONTROL
+        {
+            prompt = "File:";
+            class = C_FNEDIT;
+            flags = DLGBOX_ITEM_NEEDS_PACK;
+            info = FNEDIT
+            {
+                flags = IN_FNEDIT_STANDARD;
+                fname = "";
+            };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Use new file";
+            info = CHLIST{ rid = -SYS_NO_YES; };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Type";
+            flags = DLGBOX_ITEM_NOTIFY_CHANGED;
+            info = CHLIST { rid = save_ftype_list; };
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            prompt = "Export"<WS_SYMBOL_ELLIPSIS>;
+            flags = DLGBOX_ITEM_DIMMED;
+            info = TXTMESS
+            {
+                str = "Bitmap, 9999 * 9999";
+                flags = IN_TEXTWIN_POPOUT;
+            };
+        }
+    };
+}
+
+/* Matches the SAVE_FTYPE_??? defines, see savedlg class */
+RESOURCE MENU save_ftype_list
+{
+    items =
+    {
+        CHOICE_ITEM { str = "Drawing (.vec)"; },
+        CHOICE_ITEM { str = "Template (.vtp)"; },
+        CHOICE_ITEM { str = "Library (.vsl)"; },
+        CHOICE_ITEM { str = "Font (.vft)"; },
+        CHOICE_ITEM { str = "Psion bitmap (.pic)"; },
+        CHOICE_ITEM { str = "PCX bitmap (.pcx)"; },
+        CHOICE_ITEM { str = "AutoCAD (.dxf)"; }/*,
+        CHOICE_ITEM { str = "QuickCAD (.qcd)"; }*/
+    };
+}
+
+RESOURCE STRING sr_bm_export_item_fmt  { str = "Bitmap %d*%d"; }
+RESOURCE STRING sr_qcd_export_item_fmt { str = "Resolution %d"; }
+
+/* Export as bitmap sub dialog */
+
+RESOURCE DIALOG save_bitmap_dialog
+{
+    title = "Save as bitmap";
+    flags = DLGBOX_NOTIFY_ENTER | DLGBOX_RBUF_FILLED;
+    controls =
+    {
+        CONTROL
+        {
+            class = C_NCEDIT;
+            prompt = "Width (pixels)";
+            info = NCEDIT
+            {
+                low = 10;
+                high = 1024;
+                current = 512;
+            };
+        }
+    };
+}
+
+/* Export as QuickCAD sub dialog */
+
+RESOURCE DIALOG save_qcd_dialog
+{
+    title = "Save as QuickCAD";
+    flags = DLGBOX_NOTIFY_ENTER | DLGBOX_RBUF_FILLED;
+    controls =
+    {
+        CONTROL
+        {
+            class = C_NCEDIT;
+            prompt = "Resolution";
+            info = NCEDIT
+            {
+                low = 640;
+                high = 1600;
+                current = 800;
+            };
+        }
+    };
+}
+
+/***************************************************************************
+ **  VIEW_DIALOG  Set windows to be displayed
+ **  ~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG view_dialog
+{
+    title = "View Settings";
+    flags = DLGBOX_NOTIFY_ENTER;
+    controls =
+    {
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Status window";
+            info = CHLIST { rid = status_view_list; };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Infomation window";
+            info = CHLIST { rid = -SYS_OFFON_MENU; };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Scroll bars";
+            info = CHLIST { rid = edge_view_list; };
+        }/*,
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Rulers";
+            info = CHLIST { rid = edge_view_list; };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Command window";
+            info = CHLIST { rid = -SYS_OFFON_MENU; };
+        }*/
+    };
+}
+
+RESOURCE MENU status_view_list
+{
+    items =
+    {
+        CHOICE_ITEM { str = "Off"; },
+        CHOICE_ITEM { str = "Small"; },
+        CHOICE_ITEM { str = "On"; }
+    };
+}
+
+RESOURCE MENU edge_view_list
+{
+    items =
+    {
+        CHOICE_ITEM { str = "Off"; },
+        CHOICE_ITEM { str = "Horizontal"; },
+        CHOICE_ITEM { str = "Vertical"; },
+        CHOICE_ITEM { str = "Both"; }
+    };
+}
+
+RESOURCE DIALOG diamondlist_dialog
+{
+    title = "Set up "<WS_SYMBOL_DIAMOND>" list";
+    flags = DLGBOX_NOTIFY_ENTER;
+    controls =
+    {
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Include First view";
+            info = CHLIST { rid = -SYS_NO_YES; };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Include Second view";
+            info = CHLIST { rid = -SYS_NO_YES; };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Include Third view";
+            info = CHLIST { rid = -SYS_NO_YES; };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Include Fourth view";
+            info = CHLIST { rid = -SYS_NO_YES; };
+        }
+    };
+}
+
+/***************************************************************************
+ **  SET_CURSOR_DIALOG  Set cursor style - from Preferences sub menu.
+ **  ~~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG set_cursor_dialog
+{
+    title = "Cursor settings";
+    flags = DLGBOX_NOTIFY_ENTER;
+    controls =
+    {
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Cross size";
+            info = CHLIST { rid = cursor_size_list; };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Colour";
+            info = CHLIST { rid = cursor_color_list; };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Weight";
+            info = CHLIST { rid = cursor_thick_list; };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Selection area";
+            flags = DLGBOX_ITEM_UNDERLINED;
+            info = CHLIST { rid = -SYS_NO_YES; };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Save settings";
+            info = CHLIST { rid = -SYS_NO_YES; };
+        }
+    };
+}
+
+RESOURCE MENU cursor_size_list
+{
+    items =
+    {
+        CHOICE_ITEM { str = "Small"; },
+        CHOICE_ITEM { str = "Medium"; },
+        CHOICE_ITEM { str = "Large"; },
+        CHOICE_ITEM { str = "Full screen"; }
+    };
+}
+
+RESOURCE MENU cursor_thick_list
+{
+    items =
+    {
+        CHOICE_ITEM { str = "Light"; },
+        CHOICE_ITEM { str = "Heavy"; }
+    };
+}
+
+RESOURCE MENU cursor_color_list
+{
+    items =
+    {
+        CHOICE_ITEM { str = "Black"; },
+        CHOICE_ITEM { str = "Grey"; }
+    };
+}
+
+/***************************************************************************
+ **  SELECT_BOX_DIALOG  Set Selection box size - from Preferences sub menu.
+ **  ~~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG select_box_dialog
+{
+    title = "Set selection area (pixels)";
+    flags = DLGBOX_NOTIFY_ENTER;
+    controls =
+    {
+        CONTROL
+        {
+            prompt = "Box area";
+            class = C_NCEDIT;
+            info = NCEDIT
+            {
+                low = 2;
+                high = 10;
+                current = 2;
+            };
+        }
+    };
+}
+
+/***************************************************************************
+ **  SET_MOVEMENT_DIALOG  Set movement key function - from Preferences sub
+ **  ~~~~~~~~~~~~~~~~~~~  menu.
+ */
+
+RESOURCE DIALOG set_movement_dialog
+{
+    title = "Movement keys setting";
+    flags = DLGBOX_NOTIFY_ENTER;
+    controls =
+    {
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Cursor keys";
+            info = CHLIST { rid = set_movement_list; };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "+ Shift";
+            info = CHLIST { rid = set_movement_list; };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "+ Control";
+            info = CHLIST { rid = set_movement_list; };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "+ Shift + Control";
+            flags = DLGBOX_ITEM_UNDERLINED;
+            info = CHLIST { rid = set_movement_list; };
+        },
+        CONTROL
+        {
+            class = C_NCEDIT;
+            prompt = "Slow movement";
+            info = NCEDIT
+            {
+                low = 1;
+                high = 50;
+                current = 1;
+            };
+        },
+        CONTROL
+        {
+            class = C_NCEDIT;
+            prompt = "Fast movement";
+            flags = DLGBOX_ITEM_UNDERLINED;
+            info = NCEDIT
+            {
+                low = 2;
+                high = 100;
+                current = 10;
+            };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Save settings";
+            info = CHLIST { rid = -SYS_NO_YES; };
+        }
+    };
+}
+
+RESOURCE MENU set_movement_list
+{
+    items =
+    {
+        CHOICE_ITEM { str = "Accelerating cursor"; },
+        CHOICE_ITEM { str = "Slow cursor"; },
+        CHOICE_ITEM { str = "Fast cursor"; },
+        CHOICE_ITEM { str = "Slow window"; },
+        CHOICE_ITEM { str = "Fast window"; }
+    };
+}
+
+/***************************************************************************
+ **  SET_KEYS_DIALOG  Set keyboard commands - from Preferences sub menu
+ **  ~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG set_key_dialog
+{
+    title = "Keyboard map";
+    flags = DLGBOX_NOTIFY_ENTER;
+    controls =
+    {
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Key";
+            info = CHLIST { rid = set_key_list; };
+            flags = DLGBOX_ITEM_NOTIFY_CHANGED;
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Command";
+            info = CHLIST { rid = set_command_list; };
+            flags = DLGBOX_ITEM_NOTIFY_CHANGED;
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Save map";
+            info = CHLIST { rid = -SYS_NO_YES; };
+        }
+    };
+}
+
+RESOURCE MENU set_key_list
+{
+    items =
+    {
+        CHOICE_ITEM { str = "A"; },
+        CHOICE_ITEM { str = "B"; },
+        CHOICE_ITEM { str = "C"; },
+        CHOICE_ITEM { str = "D"; },
+        CHOICE_ITEM { str = "E"; },
+        CHOICE_ITEM { str = "F"; },
+        CHOICE_ITEM { str = "G"; },
+        CHOICE_ITEM { str = "H"; },
+        CHOICE_ITEM { str = "I"; },
+        CHOICE_ITEM { str = "J"; },
+        CHOICE_ITEM { str = "K"; },
+        CHOICE_ITEM { str = "L"; },
+        CHOICE_ITEM { str = "M"; },
+        CHOICE_ITEM { str = "N"; },
+        CHOICE_ITEM { str = "O"; },
+        CHOICE_ITEM { str = "P"; },
+        CHOICE_ITEM { str = "Q"; },
+        CHOICE_ITEM { str = "R"; },
+        CHOICE_ITEM { str = "S"; },
+        CHOICE_ITEM { str = "T"; },
+        CHOICE_ITEM { str = "U"; },
+        CHOICE_ITEM { str = "V"; },
+        CHOICE_ITEM { str = "W"; },
+        CHOICE_ITEM { str = "X"; },
+        CHOICE_ITEM { str = "Y"; },
+        CHOICE_ITEM { str = "Z"; },
+        CHOICE_ITEM { str = "0"; },
+        CHOICE_ITEM { str = "1"; },
+        CHOICE_ITEM { str = "2"; },
+        CHOICE_ITEM { str = "3"; },
+        CHOICE_ITEM { str = "4"; },
+        CHOICE_ITEM { str = "5"; },
+        CHOICE_ITEM { str = "6"; },
+        CHOICE_ITEM { str = "7"; },
+        CHOICE_ITEM { str = "8"; },
+        CHOICE_ITEM { str = "9"; }
+    };
+}
+
+RESOURCE MENU set_command_list
+{
+    items =
+    {
+        CHOICE_ITEM { str = "New file"; },
+        CHOICE_ITEM { str = "Open file"; },
+        CHOICE_ITEM { str = "Save as"; },
+        CHOICE_ITEM { str = "Save"; },
+        CHOICE_ITEM { str = "Revert"; },
+        CHOICE_ITEM { str = "Undo"; },
+        CHOICE_ITEM { str = "Redo"; },
+        CHOICE_ITEM { str = "Delete"; },
+        CHOICE_ITEM { str = "Group"; },
+        CHOICE_ITEM { str = "Ungroup"; },
+        CHOICE_ITEM { str = "Move"; },
+        CHOICE_ITEM { str = "Duplicate"; },
+        CHOICE_ITEM { str = "Scale"; },
+        CHOICE_ITEM { str = "Stretch"; },
+        CHOICE_ITEM { str = "Rotate"; },
+        CHOICE_ITEM { str = "Mirror"; },
+        CHOICE_ITEM { str = "Break"; },
+        CHOICE_ITEM { str = "Edit property"; },
+        CHOICE_ITEM { str = "Draw line"; },
+        CHOICE_ITEM { str = "Polyline"; },
+        CHOICE_ITEM { str = "Arc (centre)"; },
+        CHOICE_ITEM { str = "Quadrant"; },
+        CHOICE_ITEM { str = "Arc (3 point)"; },
+        CHOICE_ITEM { str = "Draw text"; },
+        CHOICE_ITEM { str = "Draw box"; },
+        CHOICE_ITEM { str = "Polygon"; },
+        CHOICE_ITEM { str = "Circle"; },
+        CHOICE_ITEM { str = "Draw symbol"; },
+        CHOICE_ITEM { str = "Dimensions menu"; },
+        CHOICE_ITEM { str = "First view"; },
+        CHOICE_ITEM { str = "Second view"; },
+        CHOICE_ITEM { str = "Third view"; },
+        CHOICE_ITEM { str = "Fourth view"; },
+        CHOICE_ITEM { str = "Set diamond list"; },
+        CHOICE_ITEM { str = "Snap & grid"; },
+        CHOICE_ITEM { str = "Layers"; },
+        CHOICE_ITEM { str = "Text style"; },
+        CHOICE_ITEM { str = "View windows"; },
+        CHOICE_ITEM { str = "Preferences menu"; },
+        CHOICE_ITEM { str = "Print setup"; },
+        CHOICE_ITEM { str = "Print"; },
+        CHOICE_ITEM { str = "Jump menu"; },
+        CHOICE_ITEM { str = "Zoom to menu"; },
+        CHOICE_ITEM { str = "Zoom in"; },
+        CHOICE_ITEM { str = "Zoom out"; },
+        /* Zoom sub menu */
+        CHOICE_ITEM { str = "Zoom box"; },
+        CHOICE_ITEM { str = "Zoom extent"; },
+        CHOICE_ITEM { str = "Zoom actual size"; },
+        CHOICE_ITEM { str = "Zoom full width"; },
+        CHOICE_ITEM { str = "Zoom full height"; },
+        CHOICE_ITEM { str = "Set zoom magnification"; },
+        /* Dimensions sub menu */
+        CHOICE_ITEM { str = "Horizontal dimension"; },
+        CHOICE_ITEM { str = "Vertical dimension"; },
+        CHOICE_ITEM { str = "Aligned dimension"; },
+        CHOICE_ITEM { str = "Angle dimension"; },
+        CHOICE_ITEM { str = "Radius dimension"; },
+        CHOICE_ITEM { str = "Diameter dimension"; },
+        /* Jump sub menu */
+        CHOICE_ITEM { str = "Jump to (absolute)"; },
+        CHOICE_ITEM { str = "Jump rel. to cursor (X,Y)"; },
+        CHOICE_ITEM { str = "Jump rel. to cursor (polar) "; },
+        CHOICE_ITEM { str = "Jump rel. to last (X,Y)"; },
+        CHOICE_ITEM { str = "Jump rel. to last (polar)"; },
+        CHOICE_ITEM { str = "Jump to near end point"; },
+        CHOICE_ITEM { str = "Jump to near mid point"; },
+        CHOICE_ITEM { str = "Jump to near intersect"; },
+        CHOICE_ITEM { str = "Jump to near centre"; },
+        CHOICE_ITEM { str = "Jump to near quadrant"; },
+        CHOICE_ITEM { str = "Jump to near perpendicular"; },
+        CHOICE_ITEM { str = "Jump to near tangent"; },
+        /* Prefences sub menu */
+        CHOICE_ITEM { str = "Set cursor style"; },
+        CHOICE_ITEM { str = "Set selection area"; },
+        CHOICE_ITEM { str = "Set movement keys"; },
+        CHOICE_ITEM { str = "Set keyboard map"; },
+        CHOICE_ITEM { str = "Set units & scale"; },
+        CHOICE_ITEM { str = "Set page"; },
+        CHOICE_ITEM { str = "Set origin"; },
+        CHOICE_ITEM { str = "Set move or duplicate"; },
+        CHOICE_ITEM { str = "Set jump area"; },
+        CHOICE_ITEM { str = "Set active undo"; },
+        CHOICE_ITEM { str = "Set zoom step"; },
+        /* Symbol sub menu */
+        CHOICE_ITEM { str = "Library - Create symbol"; },
+        CHOICE_ITEM { str = "Library - Ungroup symbol"; },
+        CHOICE_ITEM { str = "Library - List symbols"; },
+        /* Font sub menu */
+        CHOICE_ITEM { str = "Font - create character"; },
+        CHOICE_ITEM { str = "Font - create space"; },
+        CHOICE_ITEM { str = "Font - Ungroup character"; },
+        /* Non menu commands */
+        CHOICE_ITEM { str = "Toggle snap"; },
+        CHOICE_ITEM { str = "Toggle black grid"; },
+        CHOICE_ITEM { str = "Toggle grey grid"; },
+        CHOICE_ITEM { str = "Toggle info window"; },
+        CHOICE_ITEM { str = "Toggle quick draw"; },
+        CHOICE_ITEM { str = "Not allocated"; }
+    };
+}
+
+/***************************************************************************
+ **  SET_UNITS_DIALOG  Set units - from Preferences sub menu
+ **  ~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG set_units_dialog
+{
+    title = "Set units and scale";
+    flags = DLGBOX_NOTIFY_ENTER;
+    controls =
+    {
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Units (paper)";
+            info = CHLIST { rid = set_units_list; };
+        },
+        CONTROL
+        {
+            prompt = "Units (drawing)";
+            class = C_EDWIN;
+            info = EDWIN
+            {
+                str = "";
+                maxlen = UNIT_NAME_MAX;
+            };
+        },
+        CONTROL
+        {
+            flags = DLGBOX_ITEM_APPL_CAT;
+            class = C_DSCALED;
+            prompt = "Scale";
+            info = LNCEDIT
+            {
+                low = 1;
+                high = 10000;
+                current = 1;
+            };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Display decimals";
+            info = CHLIST { rid = set_units_dp_list; };
+        }
+    };
+}
+
+RESOURCE MENU set_units_list
+{
+    items =
+    {
+        CHOICE_ITEM { str = "cm"; },
+        CHOICE_ITEM { str = "mm"; },
+        CHOICE_ITEM { str = "Inch"; }
+    };
+}
+
+RESOURCE MENU set_units_dp_list
+{
+    items =
+    {
+        CHOICE_ITEM { str = "0"; },
+        CHOICE_ITEM { str = "1"; },
+        CHOICE_ITEM { str = "2"; },
+        CHOICE_ITEM { str = "3"; },
+        CHOICE_ITEM { str = "4"; }
+    };
+}
+
+/***************************************************************************
+ **  SET_PAGE_DIALOG  Set Page size
+ **  ~~~~~~~~~~~~~~~
+ */
+
+RESOURCE STRING sr_set_page_fmt       { str = "Page size (paper %s)"; }
+RESOURCE STRING sr_page_margins_fmt   { str = "%s, %s, %s, %s"; }
+RESOURCE STRING sr_margins_too_big    { str = "Margins larger than page"; }
+RESOURCE STRING sr_page_size_too_low  { str = "Page size too low"; }
+RESOURCE STRING sr_page_size_too_high { str = "Page size too high"; }
+
+RESOURCE DIALOG set_page_dialog
+{
+    title = "x";
+    flags = DLGBOX_NOTIFY_ENTER;
+    controls =
+    {
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Size";
+            flags =  DLGBOX_ITEM_NOTIFY_CHANGED;
+            info = CHLIST { rid = set_page_list; };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Orientation";
+            flags =  DLGBOX_ITEM_NOTIFY_CHANGED;
+            info = CHLIST { rid = set_orient_list; };
+        },
+        CONTROL
+        {
+            prompt = "Width";
+            class = C_EDWIN;
+            flags =  DLGBOX_ITEM_NOTIFY_FOCUS;
+            info = EDWIN
+            {
+                str = "";
+                flags = IN_EDWIN_VULEN_CHARACTERS;
+                maxlen = 7;
+                vulen = 4;
+            };
+        },
+        CONTROL
+        {
+            prompt = "Height";
+            class = C_EDWIN;
+            flags =  DLGBOX_ITEM_NOTIFY_FOCUS;
+            info = EDWIN
+            {
+                str = "";
+                flags = IN_EDWIN_VULEN_CHARACTERS;
+                maxlen = 7;
+                vulen = 4;
+            };
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            prompt = "Margins "<WS_SYMBOL_ELLIPSIS>;
+            info = TXTMESS
+            {
+                str = "9.99, 9.99, 9.99, 9.99";
+                flags = IN_TEXTWIN_POPOUT;
+            };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Display";
+            info = CHLIST { rid = display_page_list; };
+        }
+    };
+}
+
+RESOURCE MENU set_page_list
+{
+    items =
+    {
+        CHOICE_ITEM { str = "Custom"; },
+        CHOICE_ITEM { str = "A4"; },
+        CHOICE_ITEM { str = "Letter"; }
+    };
+}
+
+RESOURCE MENU set_orient_list
+{
+    items =
+    {
+        CHOICE_ITEM { str = "Portrait"; },
+        CHOICE_ITEM { str = "Landscape"; }
+    };
+}
+
+RESOURCE MENU display_page_list
+{
+    items =
+    {
+        CHOICE_ITEM { str = "None"; },
+        CHOICE_ITEM { str = "Page only"; },
+        CHOICE_ITEM { str = "Margins only"; },
+        CHOICE_ITEM { str = "Page + Margins"; }
+    };
+}
+
+/***************************************************************************
+ **  SET_MARGINS_DIALOG  Set Page margins
+ **  ~~~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE STRING sr_margin_title_fmt { str = "Margins (paper %s)"; }
+RESOURCE STRING sr_margin_too_high  { str = "Margin size too high"; }
+
+RESOURCE DIALOG set_margins_dialog
+{
+    title = "x";
+    flags = DLGBOX_NOTIFY_ENTER | DLGBOX_RBUF_FILLED;
+    controls =
+    {
+        CONTROL
+        {
+            prompt = "Top";
+            class = C_EDWIN;
+            info = EDWIN
+            {
+                str = "";
+                flags = IN_EDWIN_VULEN_CHARACTERS;
+                maxlen = 7;
+                vulen = 4;
+            };
+        },
+        CONTROL
+        {
+            prompt = "Left";
+            class = C_EDWIN;
+            info = EDWIN
+            {
+                str = "";
+                flags = IN_EDWIN_VULEN_CHARACTERS;
+                maxlen = 7;
+                vulen = 4;
+            };
+        },
+        CONTROL
+        {
+            prompt = "Right";
+            class = C_EDWIN;
+            info = EDWIN
+            {
+                str = "";
+                flags = IN_EDWIN_VULEN_CHARACTERS;
+                maxlen = 7;
+                vulen = 4;
+            };
+        },
+        CONTROL
+        {
+            prompt = "Bottom";
+            class = C_EDWIN;
+            info = EDWIN
+            {
+                str = "";
+                flags = IN_EDWIN_VULEN_CHARACTERS;
+                maxlen = 7;
+                vulen = 4;
+            };
+        }
+    };
+}
+
+/***************************************************************************
+ **  SET_ORIGIN_DIALOG  Set origin x,y point
+ **  ~~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE STRING sr_set_origin_title_fmt { str = "Set origin (paper %s)"; }
+
+RESOURCE DIALOG set_origin_dialog
+{
+    title = "x";
+    flags = DLGBOX_NOTIFY_ENTER | DLGBOX_RBUF_FILLED;
+    controls =
+    {
+        CONTROL
+        {
+            prompt = "X from paper left";
+            class = C_EDWIN;
+            info = EDWIN
+            {
+                str = "0";
+                maxlen = 9;
+            };
+        },
+        CONTROL
+        {
+            prompt = "Y from paper top";
+            class = C_EDWIN;
+            info = EDWIN
+            {
+                str = "0";
+                maxlen = 9;
+            };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Y positive";
+            info = CHLIST { rid = set_y_direction_list; };
+        }
+    };
+}
+
+RESOURCE MENU set_y_direction_list
+{
+    items =
+    {
+        CHOICE_ITEM { str = "Down"; },
+        CHOICE_ITEM { str = "Up"; }
+    };
+}
+
+/***************************************************************************
+ **  SHOW_PAGE_DIALOG  Show the current page details in scale format
+ **  ~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE STRING sr_show_page_fmt { str = "Current page (scale%s%s)"; }
+
+RESOURCE DIALOG show_page_dialog
+{
+    title = "x";
+    controls =
+    {
+        CONTROL
+        {
+            prompt = "Width";
+            class = C_TEXTWIN;
+            flags = DLGBOX_ITEM_DEAD;
+            info = TXTMESS
+            {
+                flags = IN_TEXTWIN_AL_LEFT;
+            };
+        },
+        CONTROL
+        {
+            prompt = "Height";
+            class = C_TEXTWIN;
+            flags = DLGBOX_ITEM_DEAD | DLGBOX_ITEM_UNDERLINED;
+            info = TXTMESS
+            {
+                flags = IN_TEXTWIN_AL_LEFT;
+            };
+        },
+        CONTROL
+        {
+            prompt = "Margin top";
+            class = C_TEXTWIN;
+            flags = DLGBOX_ITEM_DEAD;
+            info = TXTMESS
+            {
+                flags = IN_TEXTWIN_AL_LEFT;
+            };
+        },
+        CONTROL
+        {
+            prompt = "Margin left";
+            class = C_TEXTWIN;
+            flags = DLGBOX_ITEM_DEAD;
+            info = TXTMESS
+            {
+                flags = IN_TEXTWIN_AL_LEFT;
+            };
+        },
+        CONTROL
+        {
+            prompt = "Margin bottom";
+            class = C_TEXTWIN;
+            flags = DLGBOX_ITEM_DEAD;
+            info = TXTMESS
+            {
+                flags = IN_TEXTWIN_AL_LEFT;
+            };
+        },
+        CONTROL
+        {
+            prompt = "Margin right";
+            class = C_TEXTWIN;
+            flags = DLGBOX_ITEM_DEAD;
+            info = TXTMESS
+            {
+                flags = IN_TEXTWIN_AL_LEFT;
+            };
+        }
+    };
+}
+
+/***************************************************************************
+ **  MOVE_COPY_DIALOG  Set the Scale, Stretch, Rotate and Mirror commands
+ **  ~~~~~~~~~~~~~~~~  to Copy or Move - from Preferences/Commands sub menu.
+ */
+
+RESOURCE DIALOG move_copy_dialog
+{
+    title = "Set command actions";
+    flags = DLGBOX_NOTIFY_ENTER;
+    controls =
+    {
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Scale";
+            info = CHLIST { rid = move_copy_list; };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Stretch";
+            info = CHLIST { rid = move_copy_list; };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Rotate";
+            info = CHLIST { rid = move_copy_list; };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Mirror";
+            info = CHLIST { rid = move_copy_list; };
+        }
+    };
+}
+
+RESOURCE MENU move_copy_list
+{
+    items =
+    {
+        CHOICE_ITEM { str = "Move"; },
+        CHOICE_ITEM { str = "Duplicate"; }
+    };
+}
+
+/***************************************************************************
+ **  JUMP_BOX_DIALOG  Set Jump to box size - from Preferences sub menu.
+ **  ~~~~~~~~~~~~~~~
+ */
+
+RESOURCE STRING sr_jump_box_fmt { str = "\"Jump to\" area (paper %s)"; }
+
+RESOURCE DIALOG jump_box_dialog
+{
+    title = "x";
+    flags = DLGBOX_NOTIFY_ENTER;
+    controls =
+    {
+        CONTROL
+        {
+            prompt = "\"Nearest\" box size";
+            class = C_EDWIN;
+            info = EDWIN
+            {
+                str = "";
+                flags = IN_EDWIN_VULEN_CHARACTERS;
+                maxlen = 7;
+                vulen = 4;
+            };
+        }
+    };
+}
+
+/***************************************************************************
+ **  SET_UNDO_DIALOG  Set Undo activity - from Preferences sub menu
+ **  ~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG set_undo_dialog
+{
+    title = "Set undo command";
+    flags = DLGBOX_NOTIFY_ENTER;
+    controls =
+    {
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Undo off";
+            info = CHLIST { rid = -SYS_NO_YES; };
+        }
+    };
+}
+
+/***************************************************************************
+ **  SET_ZOOM_DIALOG  Set zoom step - from Preferences sub menu
+ **  ~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG set_zoom_dialog
+{
+    title = "Zoom Setting";
+    flags = DLGBOX_NOTIFY_ENTER;
+    controls =
+    {
+        CONTROL
+        {
+            class = C_NCEDIT;
+            prompt = "Size change percent";
+            info = NCEDIT
+            {
+                low = 10;
+                high = 100;
+                current = 25;
+            };
+        }
+    };
+}
+
+/***************************************************************************
+ **  CREATE_FONT_SPACE_DIALOG  Create a new font space character dialog
+ **  ~~~~~~~~~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE STRING sr_create_space_fmt { str = "Create space (scale%s%s)"; }
+
+RESOURCE DIALOG create_font_space_dialog
+{
+    title = "x";
+    flags = DLGBOX_NOTIFY_ENTER;
+    controls =
+    {
+        CONTROL
+        {
+            prompt = "Space width";
+            class = C_EDWIN;
+            info = EDWIN
+            {
+                str = "";
+                flags = IN_EDWIN_VULEN_CHARACTERS;
+                maxlen = 9;
+                vulen = 4;
+            };
+        },
+        CONTROL
+        {
+            class = C_NCEDIT;
+            prompt = "ASCII number";
+            info = NCEDIT
+            {
+                low = 0;
+                high = 255;
+                current = 32;
+            };
+        }
+    };
+}
+
+/***************************************************************************
+ **  SNAP_GRID_DIALOG  Set Snap and Grid values
+ **  ~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE STRING sr_grid_set_fmt { str = "Snap & grid (scale%s%s)"; }
+
+RESOURCE DIALOG snap_grid_dialog
+{
+    title = "x";
+    flags = DLGBOX_NOTIFY_ENTER;
+    controls =
+    {
+        CONTROL
+        {
+            prompt = "Spacing";
+            class = C_EDWIN;
+            info = EDWIN
+            {
+                str = "";
+                flags = IN_EDWIN_VULEN_CHARACTERS;
+                maxlen = 7;
+                vulen = 4;
+            };
+        },
+        CONTROL
+        {
+            prompt = "Snap";
+            class = C_CHLIST;
+            info = CHLIST { rid = -SYS_OFFON_MENU; };
+        },
+        CONTROL
+        {
+            prompt = "Display";
+            class = C_CHLIST;
+            info = CHLIST { rid = grid_disp_list; };
+        },
+        CONTROL
+        {
+            prompt = "Show minor";
+            class = C_CHLIST;
+            info = CHLIST { rid = grid_show_list; };
+        },
+        CONTROL
+        {
+            prompt = "Show major";
+            class = C_CHLIST;
+            info = CHLIST { rid = grid_show_list; };
+        }
+    };
+}
+
+RESOURCE MENU grid_disp_list
+{
+    items =
+    {
+        CHOICE_ITEM { str = "Off"; },
+        CHOICE_ITEM { str = "Grey"; },
+        CHOICE_ITEM { str = "Black"; }
+    };
+}
+
+RESOURCE MENU grid_show_list
+{
+    items =
+    {
+        CHOICE_ITEM { str = "All"; },
+        CHOICE_ITEM { str = "2nd"; },
+        CHOICE_ITEM { str = "4th"; },
+        CHOICE_ITEM { str = "5th"; },
+        CHOICE_ITEM { str = "8th"; },
+        CHOICE_ITEM { str = "10th"; }
+    };
+}
+
+/***************************************************************************
+ **  LAYER_DIALOG  Set Layer values
+ **  ~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG layer_dialog
+{
+    title = "Set layers";
+    flags = DLGBOX_ACTION_LIST | DLGBOX_NOTIFY_ENTER;
+    controls =
+    {
+        CONTROL
+        {
+            prompt = "Layer";
+            class = C_CHLIST;
+            info = CHLIST { rid = set_layer_list; };
+        },
+        CONTROL
+        {
+            class = C_ACLIST;
+            info = ACLIST { rid = set_layer_btns; };
+        }
+    };
+}
+
+RESOURCE ACLIST_ARRAY set_layer_btns
+{
+    button =
+    {
+        PUSH_BUT
+        {
+            str = "Select";
+            keycode = W_KEY_RETURN;
+        },
+        PUSH_BUT
+        {
+            str = "Toggle";
+            keycode = W_KEY_MENU;
+        },
+        PUSH_BUT
+        {
+            keycode = ' ';
+            str = "Rename";
+        }
+    };
+}
+
+RESOURCE MENU set_layer_list
+{
+    items = { CHOICE_ITEM { str = "M: MMMMMMMMMMMMMMM, Disp OFF"; } };
+}
+
+RESOURCE STRING sr_layer_list_fmt { str = "%c: %s, Disp %s"; }
+RESOURCE STRING sru_on  { str = "ON"; }
+RESOURCE STRING sru_off { str = "OFF"; }
+
+RESOURCE DIALOG layer_name_dialog
+{
+    title = "x";
+    flags = DLGBOX_NOTIFY_ENTER | DLGBOX_RBUF_FILLED;
+    controls =
+    {
+        CONTROL
+        {
+            prompt = "Name";
+            class = C_EDWIN;
+            info = EDWIN
+            {
+                str = "";
+                flags = IN_EDWIN_VULEN_CHARACTERS;
+                maxlen = UNAME_MAX;
+                vulen = 10;
+            };
+        }
+    };
+}
+
+RESOURCE STRING sr_layer_name_title_fmt { str = "Rename layer %c"; }
+
+/***************************************************************************
+ **  SET_TEXT_DIALOG  Set Text Font and transformation details
+ **  ~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG set_text_dialog
+{
+    title = "Text settings";
+    flags = DLGBOX_ACTION_LIST;
+    controls =
+    {
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Style";
+            info = CHLIST{};  /* Choice list created dynamically */
+        },
+        CONTROL
+        {
+            class = C_ACLIST;
+            info = ACLIST { rid = set_text_btns; };
+        }
+    };
+}
+
+RESOURCE ACLIST_ARRAY set_text_btns
+{
+    button =
+    {
+        PUSH_BUT
+        {
+            keycode = W_KEY_RETURN;
+            str = "Select";
+        },
+        PUSH_BUT
+        {
+            keycode = '+';
+            str = "Add";
+        },
+        PUSH_BUT
+        {
+            keycode = ' ';
+            str = "Modify";
+        },
+        PUSH_BUT
+        {
+            keycode = W_KEY_DELETE_LEFT;
+            str = "Delete";
+        }
+    };
+}
+
+RESOURCE STRING sr_tstyle_fmt { str = "%s,  %s,  %s %s,  %s deg"; }
+                              /* uname,font,size unit,angle deg */
+RESOURCE STRING sr_tstyle_del_fmt { str = "Delete \"%s\" text style"; }
+RESOURCE STRING sr_no_del_all_tstyle
+    { str = "Cannot delete all text styles"; }
+
+/***************************************************************************
+ **  ADD_TSTYLE_DIALOG  Add Text Style and transformation details
+ **  ~~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG add_tstyle_dialog
+{
+    title = "Add text style";
+    flags = DLGBOX_NOTIFY_ENTER;
+    controls =
+    {
+        CONTROL
+        {
+            prompt = "Name";
+            class = C_EDWIN;
+            info = EDWIN
+            {
+                str = "";
+                maxlen = UNAME_MAX;
+            };
+        },
+        CONTROL
+        {
+            prompt = "Font";
+            class = C_CHLIST;
+            info = CHLIST{};  /* Choice list created dynamically */
+        },
+        CONTROL
+        {
+            prompt = "Units";
+            class = C_CHLIST;
+            flags =  DLGBOX_ITEM_NOTIFY_CHANGED;
+            info = CHLIST { rid = font_units_list; };
+        },
+        CONTROL
+        {
+            prompt = "Size";
+            class = C_EDWIN;
+            flags =  DLGBOX_ITEM_NOTIFY_CHANGED;
+            info = EDWIN
+            {
+                str = "";
+                flags = IN_EDWIN_VULEN_CHARACTERS;
+                maxlen = 7;
+                vulen = 4;
+            };
+        },
+        CONTROL
+        {
+            class = C_FLTEDIT;
+            prompt = "Angle";
+            info = FLTEDIT
+            {
+                low = 0.00;
+                high = 360;
+                current = 0.00;
+                vulen = 7;
+                ndec = 2;
+            };
+        }
+    };
+}
+
+RESOURCE STRING sr_create_tstyle { str = "Modify text style"; }
+RESOURCE STRING sr_tstyle_name_fmt { str = "Text style %d"; }
+
+RESOURCE MENU font_units_list
+{
+    items =
+    {
+        CHOICE_ITEM { str = "cm (paper)"; },
+        CHOICE_ITEM { str = "mm (paper)"; },
+        CHOICE_ITEM { str = "Inch (paper)"; },
+        CHOICE_ITEM { str = "Point"; }
+    };
+}
+
+RESOURCE DIALOG del_all_tstyle_dialog
+{
+    title = "Error";
+    controls =
+    {
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            flags = DLGBOX_ITEM_CENTRE | DLGBOX_ITEM_DEAD;
+            info = TXTMESS
+            {
+                str = "Cannot delete all text styles";
+                flags = IN_TEXTWIN_AL_CENTRE;
+            };
+        },
+        CONTROL
+        {
+            class = C_ACLIST;
+            info = ACLIST { rid = -SYS_AC_CONTINUE; };
+        }
+    };
+}
+
+/***************************************************************************
+ **  SET_ZOOM_MAG_DIALOG  Set zoom magnification dialog
+ **  ~~~~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG set_zoom_mag_dialog
+{
+    title = "Zoom magnification";
+    flags = DLGBOX_NOTIFY_ENTER | DLGBOX_RBUF_FILLED;
+    controls =
+    {
+        CONTROL
+        {
+            flags = DLGBOX_ITEM_APPL_CAT;
+            class = C_SCALEDIT;
+            prompt = "Display";
+            info = LNCEDIT
+            {
+                low = 1;
+                high = 250;
+                current = 1;
+            };
+        }
+    };
+}
+
+/***************************************************************************
+ **  JUMP_XY_REL_DIALOG  Jump to relative x,y entered point
+ **  ~~~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE STRING sr_jump_title_fmt { str = "Jump to (scale%s%s)"; }
+
+RESOURCE DIALOG jump_xy_rel_dialog
+{
+    title = "x";
+    flags = DLGBOX_NOTIFY_ENTER | DLGBOX_RBUF_FILLED;
+    controls =
+    {
+        CONTROL
+        {
+            prompt = "Loc X";
+            class = C_EDWIN;
+            info = EDWIN
+            {
+                str = "0";
+                maxlen = 9;
+            };
+        },
+        CONTROL
+        {
+            prompt = "Loc Y";
+            class = C_EDWIN;
+            flags = DLGBOX_ITEM_UNDERLINED;
+            info = EDWIN
+            {
+                str = "0";
+                maxlen = 9;
+            };
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            flags = DLGBOX_ITEM_CENTRE | DLGBOX_ITEM_DEAD;
+            info = TXTMESS { flags = IN_TEXTWIN_AL_CENTRE; };
+        }
+    };
+}
+
+RESOURCE STRING sr_jump_rel_fmt { str = "Relative to %s, %s"; }
+RESOURCE STRING sr_point_off_page { str = "Point off page, not moved"; }
+
+/***************************************************************************
+ **  JUMP_POLAR_DIALOG  Jump to relative polar entered point
+ **  ~~~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG jump_polar_dialog
+{
+    title = "x";
+    flags = DLGBOX_NOTIFY_ENTER | DLGBOX_RBUF_FILLED;
+    controls =
+    {
+        CONTROL
+        {
+            prompt = "Radius";
+            class = C_EDWIN;
+            info = EDWIN
+            {
+                str = "0";
+                maxlen = 9;
+            };
+        },
+        CONTROL
+        {
+            class = C_FLTEDIT;
+            prompt = "Angle";
+            flags = DLGBOX_ITEM_UNDERLINED;
+            info = FLTEDIT
+            {
+                low = 0.00;
+                high = 360;
+                current = 0.00;
+                vulen = 7;
+                ndec = 2;
+            };
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            flags = DLGBOX_ITEM_CENTRE | DLGBOX_ITEM_DEAD;
+            info = TXTMESS { flags = IN_TEXTWIN_AL_CENTRE; };
+        }
+    };
+}
+
+/***************************************************************************
+ **  LIST_SYMBOL_DIALOG  List (only) symbols in current file
+ **  ~~~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG list_symbol_dialog
+{
+    title = "Symbols";
+    /*flags = DLGBOX_ACTION_LIST;*/
+    controls =
+    {
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Name";
+            flags = DLGBOX_ITEM_NOTIFY_CHANGED;
+            info = CHLIST{};  /* Choice list created dynamically */
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Ref.";
+            flags = DLGBOX_ITEM_NOTIFY_CHANGED;
+            info = CHLIST{};  /* Choice list created dynamically */
+        }
+    };
+}
+
+RESOURCE STRING sr_no_symbols { str = "No symbols in file"; }
+
+/***************************************************************************
+ **  PRINT_SETUP_DIALOG  Set Page size
+ **  ~~~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG set_printer_dialog
+{
+    title = "Printer setup";
+    flags = DLGBOX_NOTIFY_ENTER | DLGBOX_RBUF_FILLED;
+    controls=
+    {
+        CONTROL
+        {
+            prompt = "Printer model";
+            class = C_CHLIST;
+            info = CHLIST { rid = print_model_list; };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Printer device";
+            flags =  DLGBOX_ITEM_NOTIFY_CHANGED;
+            info = CHLIST { rid = print_device_list; };
+        },
+        CONTROL
+        {
+            class = C_CHLIST;
+            prompt = "Save settings";
+            info = CHLIST { rid = -SYS_NO_YES; };
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            prompt = "Serial characteristics "<WS_SYMBOL_ELLIPSIS>;
+            info = TXTMESS
+            {
+                str = "19200 "<WS_SYMBOL_ELLIPSIS>;
+                flags = IN_TEXTWIN_POPOUT;
+            };
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            prompt = "Serial handshaking "<WS_SYMBOL_ELLIPSIS>;
+            info = TXTMESS
+            {
+                str = "Xon/Xoff OFF "<WS_SYMBOL_ELLIPSIS>;
+                flags = IN_TEXTWIN_POPOUT;
+            };
+        },
+        CONTROL
+        {
+            class = C_FNEDIT;
+            prompt = "File:";
+            flags = DLGBOX_ITEM_NEEDS_PACK | DLGBOX_ITEM_NOTIFY_CHANGED;
+            info = FNEDIT { flags = IN_FNEDIT_NO_AUTOQUERY; };
+        }
+    };
+}
+
+RESOURCE MENU print_model_list
+{
+    items =
+    {
+        CHOICE_ITEM { str = "HP LaserJet"; },
+        CHOICE_ITEM { str = "HP 7475A Plotter"; }/*,
+        CHOICE_ITEM { str = "Custom HP PCL 5"; },
+        CHOICE_ITEM { str = "Custom HP-GL Plotter"; }*/
+    };
+}
+
+RESOURCE MENU print_device_list
+{
+    items =
+    {
+        CHOICE_ITEM { str = "Parallel"; },
+        CHOICE_ITEM { str = "Serial"; },
+        CHOICE_ITEM { str = "File"; },
+        CHOICE_ITEM { str = "Infrared"; }
+    };
+}
+
+RESOURCE STRING sr_serial_char_fmt { str = "%ld "<WS_SYMBOL_ELLIPSIS>; }
+RESOURCE STRING sr_serial_hand_fmt { str = "Xon/Xoff %s "<WS_SYMBOL_ELLIPSIS>; }
+
+/***************************************************************************
+ **  CUSTOM_PLOT_DIALOG  Custom ploting dialog
+ **  ~~~~~~~~~~~~~~~~~~
+ */
+
+#if 0
+RESOURCE STRING sr_custom_plot_title_fmt { str = "Set custom printer (%s)"; }
+
+RESOURCE DIALOG custom_plot_dialog
+{
+    title = "Set custom printer (Inch)";
+    flags = DLGBOX_NOTIFY_ENTER | DLGBOX_RBUF_FILLED;
+    controls =
+    {
+        CONTROL
+        {
+            prompt = "Rotate";
+            class = C_CHLIST;
+            info = CHLIST { rid = -SYS_NO_YES; };
+        },
+        CONTROL
+        {
+            prompt = "Offset X";
+            class = C_EDWIN;
+            info = EDWIN
+            {
+                str = "";
+                flags = IN_EDWIN_VULEN_CHARACTERS;
+                maxlen = 7;
+                vulen = 4;
+            };
+        },
+        CONTROL
+        {
+            prompt = "Offset Y";
+            class = C_EDWIN;
+            info = EDWIN
+            {
+                str = "";
+                flags = IN_EDWIN_VULEN_CHARACTERS;
+                maxlen = 7;
+                vulen = 4;
+            };
+        }
+    };
+}
+#endif
+
+/***************************************************************************
+ **  ESC_PLOT_DIALOG  Escape from Plotting dialog
+ **  ~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG esc_plot_dialog
+{
+    title = "Printing";
+    flags = DLGBOX_RBUF_FILLED | DLGBOX_NO_WAIT | DLGBOX_NOTIFY_ESCAPE;
+    controls=
+    {
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            flags = DLGBOX_ITEM_CENTRE | DLGBOX_ITEM_DEAD;
+            info = TXTMESS
+            {
+                str = "Printing in progress";
+                flags = IN_TEXTWIN_AL_CENTRE;
+            };
+        },
+        CONTROL
+        {
+            class = C_ACLIST;
+            info = ACLIST
+            {
+                rid = escape_btn;
+            };
+        }
+    };
+}
+
+RESOURCE ACLIST_ARRAY escape_btn
+{
+    button =
+    {
+        PUSH_BUT
+        {
+            keycode = W_KEY_ESCAPE;
+            str = "Cancel";
+        }
+    };
+}
+
+/***************************************************************************
+ **  DEBUG_DIALOG  Display debug info dialog
+ **  ~~~~~~~~~~~~
+ */
+
+/*!DBX4!*/
+RESOURCE DIALOG debug_dialog
+{
+    title = "Vector Debug";
+    flags=DLGBOX_RBUF_FILLED;
+    controls=
+    {
+        CONTROL
+        {
+            class=C_TEXTWIN;
+            flags=DLGBOX_ITEM_CENTRE|DLGBOX_ITEM_DEAD;
+            info=TXTMESS
+            {
+                flags=IN_TEXTWIN_AL_CENTRE;
+            };
+        },
+        CONTROL
+        {
+            class=C_TEXTWIN;
+            flags=DLGBOX_ITEM_CENTRE|DLGBOX_ITEM_DEAD;
+            info=TXTMESS
+            {
+                flags=IN_TEXTWIN_AL_CENTRE;
+            };
+        },
+        CONTROL
+        {
+            class=C_ACLIST;
+            info=ACLIST
+            {
+                rid = continue_btn;
+            };
+        }
+    };
+}
+
+RESOURCE ACLIST_ARRAY continue_btn
+{
+    button =
+    {
+        PUSH_BUT
+        {
+            keycode = W_KEY_RETURN;
+            str="Continue";
+        }
+    };
+}
+
+RESOURCE STRING sr_debug_3 { str = "Code: %d, %d"; }
+
+#include "vecbld.rsi"
+#include "vecsym.rsi"
+
+#include "vechelp.rhi"
+
+#include "vecqcd.rsi"
+#include "vecdxf.rsi"
+
+/* End of WARI.RSS File */

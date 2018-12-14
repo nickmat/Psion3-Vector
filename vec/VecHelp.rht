@@ -1,0 +1,103 @@
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Project: VECTOR FOR THE PSION 3a          *  Written by: Nick Matthews  *
+ *  Module: VECTOR HELP TEXT RESOURCE        *  Date Started: 25 May 1997  *
+ *    File: VECHELP.RHT     Type: PSION HELP *  Date Revised: 11 Nov 1997  *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+    Copyright (c) 1997, Nick Matthews
+
+ Compile into WARI.RHI with PHCOMP
+
+#Page  vector_help            Vector help index
+
+#Topic help_get_started
+#Topic help_info_window
+#Topic help_moving_around
+#Topic help_keyboard
+#Topic help_selection
+#Topic help_symbols
+#Topic help_register
+#Topic help_support
+#Topic help_license
+#Topic help_about_kizzyco
+
+#Page  help_get_started      Getting started
+#Include VHPStart.rht
+
+#Page help_info_window       Info window
+#Include VHPInfo.rht
+
+#Page  help_moving_around    Moving around
+#Include VHPMove.rht
+
+#Page  help_keyboard         Keyboard map
+#Include VHPKeys.rht
+
+#Page  help_selection        Selections
+#Include VHPSel.rht
+
+#Page  help_symbols          Symbols
+#Include VHPSym.rht
+
+#Page  help_register         How to register
+
+#Topic help_license
+#Topic help_about_kizzyco
+#Topic vector_help
+
+#Include VHPReg.rht
+
+See also:
+
+#Page  help_support        Technical Support
+#Include VHPSup.rht
+
+#Page  help_license          Copyright license
+
+#Topic help_register
+#Topic help_about_kizzyco
+#Topic vector_help
+
+#Include VHPLic.rht
+
+See also:
+
+#Page  help_about_kizzyco    About KizzyCo
+
+KizzyCo is involved in software
+development for Desktop and
+Hand Held Personal Computers.
+
+KizzyCo can create a customised
+version of Vector for real time
+data collection or for creating
+drawings automatically from
+data files.
+
+The web site below contains up
+to date information on Vector
+and other KizzyCo programs.
+
+Vectors author can be contacted
+by any method shown below,
+although email is prefered. He
+is always pleased to hear from
+anyone using his software.
+
+Nick Matthews
+
+ KizzyCo
+ 74 High Street
+ Ardingly
+ West Sussex   RH17 6TD
+ England
+
+ Tel: +44 (0)1444 892560
+ nick@kizzyco.com
+ http://www.kizzyco.com/
+__________________________________
+
+ Nick Matthews,
+ Sole Proprietor, KizzyCo.
+
+#End

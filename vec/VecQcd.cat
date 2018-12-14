@@ -1,0 +1,70 @@
+!* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+!* Project: VECTOR FOR THE PSION 3a          *  Written by: Nick Matthews  *
+!*  Module: QuickCAD IMPORT & EXPORT DYL     *  Date Started:  3 Apr 1998  *
+!*    File: VECQCD.CAT      Type: PSION CAT  *  Date Revised:  3 Apr 1998  *
+!* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+!   Copyright (c) 1998, Nick Matthews
+
+LIBRARY vecqcd
+
+EXTERNAL olib
+
+INCLUDE olib.g
+
+!***************************************************************************
+!*  qcd  QuickCAD Import and Export
+!*  ~~~
+
+CLASS xchange root
+{
+    ADD xch_version
+    ADD xch_import
+    ADD xch_export
+    TYPES
+    {
+        typedef struct
+        {
+            UINT type;
+            UINT x1;
+            UINT x2;
+            UINT x3;
+            UINT y1;
+            UINT y2;
+            UINT y3;
+            LONG radius;
+            UINT width;
+            LONG color;
+            UINT fontsize;
+            INT  bold;
+            INT  italic;
+            INT  underline;
+            TEXT fontname[32];
+            TEXT text[202];
+            TEXT number[8];
+            INT  textflag;
+        } QCD_ENTRY;
+        typedef struct
+        {
+            TEXT* fname;
+            UINT  res;
+        } EXPORT_DATA_QCD;
+    }
+    CONSTANTS
+    {
+        QCD_LINE    0
+        QCD_BOX     1
+        QCD_ARC     2
+        QCD_CIRCLE  3
+        QCD_TEXT    4
+        QCD_NUMBER  5
+        QCD_FILL    6
+    }
+    PROPERTY
+    {
+        QCD_ENTRY entry;
+        UINT res;
+    }
+}
+
+! End of VECQCD.CAT

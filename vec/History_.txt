@@ -1,0 +1,48 @@
+
+    Vector for Psion 3a/3c - Version History
+
+    Copyright (c) 1997, 1998 Nick Matthews, KizzyCo
+
+P1.20.b5  vecp12b5.zip  11 Dec 1998
+
+  1. Dimension menu option and sub menu added. (not yet functioning)
+  2. DXF Export, Bugs related to movable drawing origin and Y direction corrected.
+  3. DXF Export, Ommisions in output file causing problems with AutoCAD R14 added.
+
+P1.20.b4  vecp12b4.zip
+
+  1. When config file is saved only updated section is changed
+  2. Movement key settings and cursor style are now saved with config file
+  3. Units dialog changed to Units and scale and scale settings added
+  4. Various dialog now shows scale or paper units and values.
+  5. Preferences sub menu reorganised
+  6. "Preferences, Origin" option and dialog box added.
+  7. Set direction of y scale added to "Origin" dialog box
+  8. Default new file units is now mm (was cm)
+  9. "Show page" dialog shown after changing Page, Units & scale or Origin
+ 10. Symbol selection now displays correctly when in Quick Draw mode.
+ 11. Info window displays Scale in step position during Viewing command
+ 12. DXF import, rotating and scaling of blocks corrected
+ 13. DXF import, unknown sections now skipped instead of causing error
+ 14. DXF import, layers are now correctly switched on or off
+ 15. RegNet registration details updated in help pages
+ 16. Serial printing now allows for higher 3mx speed.
+
+P1.20.b3  vecp12b3.zip
+
+  1. Implemented DXF Import in VECDXF.VDL dynamic library file
+  2. Corrected bug when displaying long text strings.
+  3. 'Zoom to, Extent" now ignores switched off layers
+  4. Saving busy message put up during file save
+  5. DXF export cance dialog gives count of saved elements
+
+P1.20.b2  vecp12b2.zip
+
+  1. Fixed break on 3 pt arc where a remaining arc was over 180 deg.
+  2. Added DXF Export to "Save as" dialog, implemented in VECDXF.VDL
+  3. Added DXF Import to "Open" dialog but not implemented yet.
+
+P1.11   vecp111.zip
+
+  Released 13 May 1998
+

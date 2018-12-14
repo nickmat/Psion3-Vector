@@ -1,0 +1,24 @@
+--* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+--* Project: VECTOR FOR THE PSION 3a          *  Written by: Nick Matthews  *
+--*  Module: VECQCD DYL PROJECT FILE          *  Date Started:  3 Apr 1998  *
+--*    File: VECQCD.PR       Type: TS PROJECT *  Date Revised:  3 Apr 1998  *
+--* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+-- For use with VECTOR.MAK file
+
+#system epoc dyl
+#set epocinit=iplib
+#model small jpi
+
+#abort on
+
+#compile vecqcd.c
+#compile vecqcdim.c
+#compile vecqcdex.c
+
+#pragma link(olib.lib)
+#pragma link(hwim.lib)
+
+#link vecqcd
+
+-- End of VECQCD.PR file

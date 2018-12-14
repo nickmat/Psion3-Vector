@@ -1,0 +1,174 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Project: VECTOR FOR THE PSION EPOC16      *  Written by: Nick Matthews  *
+ *  Module: DXF XCHANGE RESOURCE             *  Date Started: 26 Aug 1998  *
+ *    File: VECDXF.RSI      Type: PSION RSS  *  Date Revised: 26 Aug 1998  *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+    Copyright (c) 1998, Nick Matthews
+*/
+
+RESOURCE STRING sr_dxf_group_fmt     { str = "%3d"; }
+RESOURCE STRING sr_dxf_int_fmt       { str = "%d"; }
+RESOURCE STRING sr_dxf_long_fmt      { str = "%ld"; }
+RESOURCE STRING sr_dxf_grp_name_fmt  { str = "VECTOR-%c%04x"; }
+RESOURCE STRING sr_dxf_lnk_name_fmt  { str = "%s-L%04x"; }  /* max size LINK_NAME_MAX */
+
+
+/*
+**  NOTE: The position of these strings is critical - see VecDxfIm.c defines
+*/
+
+/* Sections (Group 0) strings */
+RESOURCE STRING sr_dxf_section       { str = "SECTION"; }
+RESOURCE STRING sr_dxf_endsec        { str = "ENDSEC"; }
+RESOURCE STRING sr_dxf_eof           { str = "EOF"; }
+
+RESOURCE STRING sr_dxf_header        { str = "HEADER"; }
+RESOURCE STRING sr_dxf_tables        { str = "TABLES"; }
+RESOURCE STRING sr_dxf_blocks        { str = "BLOCKS"; }
+RESOURCE STRING sr_dxf_entities      { str = "ENTITIES"; }
+
+RESOURCE STRING sr_dxf_table         { str = "TABLE"; }
+RESOURCE STRING sr_dxf_endtab        { str = "ENDTAB"; }
+RESOURCE STRING sr_dxf_ltype         { str = "LTYPE"; }
+RESOURCE STRING sr_dxf_layer         { str = "LAYER"; }
+RESOURCE STRING sr_dxf_style         { str = "STYLE"; }
+RESOURCE STRING sr_dxf_vport         { str = "VPORT"; }
+
+RESOURCE STRING sr_dxf_line          { str = "LINE"; }
+RESOURCE STRING sr_dxf_circle        { str = "CIRCLE"; }
+RESOURCE STRING sr_dxf_arc           { str = "ARC"; }
+RESOURCE STRING sr_dxf_polyline      { str = "POLYLINE"; }
+RESOURCE STRING sr_dxf_vertex        { str = "VERTEX"; }
+RESOURCE STRING sr_dxf_seqend        { str = "SEQEND"; }
+RESOURCE STRING sr_dxf_text          { str = "TEXT"; }
+RESOURCE STRING sr_dxf_block         { str = "BLOCK"; }
+RESOURCE STRING sr_dxf_endblk        { str = "ENDBLK"; }
+RESOURCE STRING sr_dxf_insert        { str = "INSERT"; }
+
+/* Line type default */
+RESOURCE STRING sr_dxf_continuous    { str = "CONTINUOUS"; }
+
+/* VPORT default */
+RESOURCE STRING sr_dxf_v_active      { str = "*ACTIVE"; }
+
+/* HEADER (Group 9) strings */
+RESOURCE STRING sr_dxf_h_acadver     { str = "$ACADVER"; }
+RESOURCE STRING sr_dxf_h_extmax      { str = "$EXTMAX"; }
+RESOURCE STRING sr_dxf_h_extmin      { str = "$EXTMIN"; }
+RESOURCE STRING sr_dxf_h_limmax      { str = "$LIMMAX"; }
+RESOURCE STRING sr_dxf_h_limmin      { str = "$LIMMIN"; }
+RESOURCE STRING sr_dxf_h_angbase     { str = "$ANGBASE"; }
+RESOURCE STRING sr_dxf_h_angdir      { str = "$ANGDIR"; }
+
+RESOURCE STRING sr_dxf_h_pextmax     { str = "$PEXTMAX"; }
+RESOURCE STRING sr_dxf_h_pextmin     { str = "$PEXTMIN"; }
+RESOURCE STRING sr_dxf_h_plimmax     { str = "$PLIMMAX"; }
+RESOURCE STRING sr_dxf_h_plimmin     { str = "$PLIMMIN"; }
+RESOURCE STRING sr_dxf_h_clayer      { str = "$CLAYER"; }
+RESOURCE STRING sr_dxf_h_gridmode    { str = "$GRIDMODE"; }
+RESOURCE STRING sr_dxf_h_snapmode    { str = "$SNAPMODE"; }
+RESOURCE STRING sr_dxf_h_gridunit    { str = "$GRIDUNIT"; }
+RESOURCE STRING sr_dxf_h_snapunit    { str = "$SNAPUNIT"; }
+RESOURCE STRING sr_dxf_h_snapang     { str = "$SNAPANG"; }
+RESOURCE STRING sr_dxf_h_snapbase    { str = "$SNAPBASE"; }
+
+RESOURCE STRING sr_dxf_acadver       { str = "AC1006"; }
+
+
+/***************************************************************************
+ **  ESC_EXPORT_DIALOG  Escape from export dialog
+ **  ~~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG esc_export_dialog
+{
+    title = "Export";
+    flags = DLGBOX_RBUF_FILLED | DLGBOX_NO_WAIT | DLGBOX_NOTIFY_ESCAPE;
+    controls=
+    {
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            flags = DLGBOX_ITEM_CENTRE | DLGBOX_ITEM_DEAD;
+            info = TXTMESS
+            {
+                str = "Export DXF in progress";
+                flags = IN_TEXTWIN_AL_CENTRE;
+            };
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            flags = DLGBOX_ITEM_CENTRE | DLGBOX_ITEM_DEAD;
+            info = TXTMESS
+            {
+                str = "Writing elements (9999)";
+                flags = IN_TEXTWIN_AL_CENTRE;
+            };
+        },
+        CONTROL
+        {
+            class = C_ACLIST;
+            info = ACLIST
+            {
+                rid = escape_btn;
+            };
+        }
+    };
+}
+
+RESOURCE STRING sr_dxf_exp_update_hdr  { str = "Writing headers"; }
+RESOURCE STRING sr_dxf_exp_update_fmt  { str = "Writing elements (%d)"; }
+RESOURCE STRING sr_dxf_update_done     { str = "Done (%d)"; }
+
+/***************************************************************************
+ **  ESC_IMPORT_DIALOG  Escape from export dialog
+ **  ~~~~~~~~~~~~~~~~~
+ */
+
+RESOURCE DIALOG esc_import_dialog
+{
+    title = "Import";
+    flags = DLGBOX_RBUF_FILLED | DLGBOX_NO_WAIT | DLGBOX_NOTIFY_ESCAPE;
+    controls=
+    {
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            flags = DLGBOX_ITEM_CENTRE | DLGBOX_ITEM_DEAD;
+            info = TXTMESS
+            {
+                str = "Import DXF in progress";
+                flags = IN_TEXTWIN_AL_CENTRE;
+            };
+        },
+        CONTROL
+        {
+            class = C_TEXTWIN;
+            flags = DLGBOX_ITEM_CENTRE | DLGBOX_ITEM_DEAD;
+            info = TXTMESS
+            {
+                str = "Reading ENTITIES (9999)";
+                flags = IN_TEXTWIN_AL_CENTRE;
+            };
+        },
+        CONTROL
+        {
+            class = C_ACLIST;
+            info = ACLIST
+            {
+                rid = escape_btn;
+            };
+        }
+    };
+}
+
+RESOURCE STRING sr_dxf_imp_update_hdr  { str = "Reading HEADER"; }
+RESOURCE STRING sr_dxf_imp_update_tab  { str = "Reading TABLES"; }
+RESOURCE STRING sr_dxf_imp_update_blk  { str = "Scanning BLOCKS"; }
+RESOURCE STRING sr_dxf_imp_update_fmt  { str = "Reading ENTITIES (%d)"; }
+RESOURCE STRING sr_dxf_imp_update_skp  { str = "Skipping %s"; }
+/*RESOURCE STRING sr_dxf_imp_update_done { str = "Done (%d)"; }*/
+
+/* End of VecDxf.rsi file */

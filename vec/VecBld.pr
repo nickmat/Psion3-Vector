@@ -1,0 +1,32 @@
+--* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+--* Project: VECTOR FOR THE PSION 3a          *  Written by: Nick Matthews  *
+--*  Module: VECSYM DYL PROJECT FILE          *  Date Started: 20 Jan 1997  *
+--*    File: VECSYM.PR       Type: TS PROJECT *  Date Revised: 20 Jan 1997  *
+--* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+-- For use with VECTOR.MAK file
+
+#system epoc dyl
+#set epocinit=iplib
+#model small jpi
+
+#abort on
+
+#compile vecprop.c
+#compile vecpdlg.c
+#compile vecbld.c
+#compile vecbuild.c
+#compile vecsel.c
+#compile vecaggr.c
+#compile bldsym.c
+#compile vecbreak.c
+
+#compile vecjump.c
+#compile vecexp.c
+
+#pragma link(olib.lib)
+#pragma link(hwim.lib)
+
+#link vecbld
+
+-- End of VECTOR.PR file

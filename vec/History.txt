@@ -1,0 +1,43 @@
+
+    Vector for Psion 3a/3c - Version History
+
+    Copyright (c) 1997, 1998 Nick Matthews, KizzyCo
+
+
+P1.11  13-May-98  vecp111.zip
+
+  1. Grey grid now updated when scrolled.
+  2. Single key command Toggle grid renamed Toggle black grid.
+  3. Single key command Toggle grey grid added
+  4. Bug fixed for Symbol property dialog, name field.
+  5. Online help text for Symbol select window added.
+  6. File type added to Open dialog to enable file import.
+  7. Problems with Default font characters H and y corrected
+  8. Quck draw added to single key functions - default to Q key.
+  9. Number of characters in Text line corrected to 200
+ 10. Removed bug which caused problems when resetting the drawing
+
+P1.10   3-Mar-98  vecp110.zip
+
+  1. Bug when setting defaults for "File, New" removed.
+  2. Printer setup added to Special menu.
+  3. Print added to Special menu.
+  4. Margin settings added Page setup dialog.
+  5. Print driver for HP 7475A plotter added.
+  6. Print driver for HP LaserJet (PCL 5) added.
+  7. Zoom out command increases Zoom value by at least one step.
+  8. Support for IR printing on 3c added.
+  9. Checks for file corruption added during file open.
+ 10. Extended ascii characters in Text entry do not cause errors.
+ 11. Zoom Extent fits all of drawing in and now handles very small extent.
+ 12. Object Symbol now works if the previous library is missing.
+ 13. Subset of extended characters added to default font.
+ 14. Updates and minor corrections to Vector manual.
+ 15. Example drawings modified to allow for margins.
+
+
+P1.00   1-Dec-97  vecp100.zip
+
+  1st Public release.
+
+

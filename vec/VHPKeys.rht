@@ -1,0 +1,29 @@
+# Keyboard map
+
+By default, single key presses can access the following
+functions
+
+A  Jump to X,Y
+B  Zoom to box
+E  Zoom to Extent
+G  Toggle Grid
+I  Toggle Info window
+L  Jump relative to Last Enter point, X,Y
+P  Jump relative to Cursor (Polar)
+Q  Toggle Quick Draw
+R  Jump relative to Cursor (X,Y)
+S  Toggle Snap
+X  Zoom Out
+Z  Zoom In
+
+Apart from G, I, Q and S, these are identical to the Menu
+options.
+
+Use the Preferences/Keyboard option to both change these
+defaults and to set the remaining letter and number keys to
+invoke other functions. Most of the Menu and Sub menu
+commands can be selected, as well as the extra ones.
+
+Unlike other settings, the keyboard map is not saved with
+the drawing but in a separate configeration file.
+

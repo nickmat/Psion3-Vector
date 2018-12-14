@@ -1,0 +1,124 @@
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Project: VECTOR FOR THE PSION 3a          *  Written by: Nick Matthews  *
+ *  Module: TO DO LIST and FUTURE WISH LIST  *  Date Started:  1 Sep 1996  *
+ *    File: VECTODO.TXT     Type: ASCII TEXT *  Date Revised: 26 Feb 1998  *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+ 2. Add HP-GL to 'Save as' dialog
+
+ 3. Save as bitmap - add margin option.
+
+ 4. Update Manual.
+
+ 6. Add Shift keystrokes, set default use to toggle layers.
+
+ 7. Change the cursor to show the selection area only when in selection mode.
+
+ 8. Allow 'Jump to, Intersection' for all object, e.g.. line and circle.
+
+ 9. DXF Export
+ 9.01  Convert text string character set
+
+10. DXF Import
+10.01  Convert text string character set
+10.03  Check Arc sizes and make 3pt arc if centre or radius too big
+
+13. Allow for larger paper size
+
+16. Make printing system a VDL dynamic library
+
+17. Cache font characters
+
+18. Add a Merge file option?
+
+19. Activate Horizontal dimensions
+
+20. Activate Vertical dimensions
+
+21. Activate Aligned dimensions
+
+22. Activate Angle dimensions
+
+23. Activate Radius dimensions
+
+24. Activate Diameter dimensions
+
+25. Default font character 157 (cap O + /) not grouped properly
+
+26. Foreign keystrokes (above ASCII 126) cause panic 55
+
+27. Registration code, allow for accented characters
+
+Examples
+~~~~~~~~
+
+Templates
+  Borda4p     Borders for A4 Portrait
+  Borda4l     Borders for A4 Landscape
+
+Libraries
+  Pipe        Standard pipework symbols
+  Gaspipe     Gas pipe symbols
+  Dompipe     Domestic pipework symbols
+
+Fonts
+  Serif
+  Nonserif
+  Mono
+  Decorate
+
+Drawings
+  Site        Site plan
+  Map
+  Flow        A flow chart
+  Chart       Personnel chart
+  Plan        Floor plan
+
+Future Versions
+~~~~~~~~~~~~~~~
+Edit Menu
+  Add Translate option
+
+Drawing Menu
+  Add Curve
+  Add Elliptical Arc
+  Add Chamfer and bevels
+
+Object Menu
+  Add Shape
+  Add Ellipse
+  Add Fill option
+
+Settings Menu
+  Add Attributes
+
+Preferences sub menu
+  Add Ballistic Cursor settings
+
+View Dialog
+  Add Horizontal & Vertical Rulers
+  Add Command Window
+
+Page Dialog
+  Allow for larger page sizes
+
+Link Property Dialog
+  Allow the library to be changed
+
+Add additional features
+  Speed up response by background drawing
+  Add Attach points to symbols
+  Allow text in symbols
+  Add Arrays (Box and Ring)
+  Add Decorated line property
+  Add Compound Lines and Objects
+  Make a blinking cursor
+  Switch cursor off during "Viewing"
+  Improve selection by adding & removing elements before operation
+        + key to add to selection?
+        - key to remove items from selection?
+  Text entry, Move cursor as chars are entered, use a text cursor.
+  Oblique angle for text
+  Isometric grid lines
+
+End of VecToDo.txt file

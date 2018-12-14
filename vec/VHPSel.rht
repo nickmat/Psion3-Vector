@@ -1,0 +1,30 @@
+# Selections
+
+After choosing an option that makes a change to the
+drawing, the first step is always to select the items to be
+operated on. The selected part of the drawing will be shown
+as grey. It may help to adjust the screen contrast so that
+the grey is dark enough to see, but light enough to show as
+different from black.
+
+Make a selection by placing the cursor directly over the
+required items and pressing the Enter key.
+
+To select more than one item, move the cursor to a blank
+area of the screen and press Enter to anchor one corner of
+the selection box. If the box is formed by moving the
+cursor to the right, all items which are fully contained
+within are selected. Forming the box by moving to the left
+selects all the items which have some part of them in the
+box.
+
+The selection area is the size of a box around the cursor
+which determines if an item is selected or a selection box
+created. The size of the area (in pixels) can be changed
+from the 'Selection area' option on the 'Preferences' menu.
+The cursor can be set to show this selecton area from the
+'Cursor style' option on the same menu.
+
+An alternative to the above is to reselected the previous
+selection by pressing the Tab key.
+
